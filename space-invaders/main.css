@@ -1,0 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Gill Sans WGL W01 Light";
+  font-size: 18px;
+  line-height: 1.26em;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern";
+  -webkit-font-feature-settings: "kern";
+  -moz-font-feature-settings: "kern";
+  -moz-font-feature-settings: "kern=1";
+
+  width: 680px;
+  margin-left:auto;
+  margin-right:auto;
+  padding: 0 10px 0 10px;
+  color: #333;
+}
+
+a {
+  color: #444;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 36px;
+  line-height: 1em;
+  font-weight:normal;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  margin-top:15px;
+  margin-bottom:0;
+  padding-bottom: 0;
+  padding: 0;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight:normal;
+  text-align: center;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:8px;
+  margin-bottom:2px;
+  padding: 0;
+}
+
+.header a {
+  text-decoration:none;
+}
+
+h2 a {
+  text-decoration:none;
+}
+
+p {
+  margin:0 0 12px 0;
+}
+
+.strapline {
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding:0;
+  margin:0;
+}
+
+.header {
+  border-bottom: 1px solid black;
+  padding-bottom: 8px;
+}
+
+.footer {
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  padding-top: 8px;
+  border-top:1px solid black;
+  height: 25px;
+}
+
+.grid {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.grid-element {
+  height: 360px;
+  width: 300px;
+  margin: 20px;
+}
+
+.grid-element.project {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a:hover .grid-element.main {
+  border: 1px black solid;
+  margin: 19px; /* to compensote for push down of border */
+}
+
+.grid-element.main {
+  float: left;
+}
+
+.project-links {
+  text-align: center;
+}
+
+footer {
+  margin-top: 50px;
+  padding-top: 25px;
+  border-top: 1px solid lightgrey;
+}
+
+footer > a {
+  color: #BBBBBB;
+}
+
+
+/* Touch Controls */
+
+#touch-controls-container {
+  position: fixed;
+  bottom: 50px;
+  right: 0;
+  width: 400px;
+}
+
+#touch-controls {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+#touch-controls button {
+  border: 3px solid black;
+  padding: 5px;
+  display: inline-block;
+  min-width: 80px;
+  margin: 25px;
+}
+
+/*
+#tc-right {
+  top: 0px;
+  right: 0px;
+}
+
+#tc-left {
+  top: 0px;
+  left: 0px;
+}
+*/
+
+#tc-shoot {
+  width: 90%;
+}
