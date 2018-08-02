@@ -1,0 +1,24 @@
+{
+  "name": "space-invaders",
+  "version": "0.0.1",
+  "description": "Demonstrates a game loop, collision detection, keyboard input, drawing to the canvas and playing sounds",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
+  },
+  "engines": {
+    "node": "6.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maryrosecook/annotated-code/tree/master/space-invaders"
+  },
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "license": "MIT"
+}
