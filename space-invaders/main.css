@@ -17,6 +17,10 @@ body {
   margin-right:auto;
   padding: 0 10px 0 10px;
   color: #333;
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
 }
 
 a {
@@ -41,13 +45,13 @@ h1 {
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 28px;
   font-weight:normal;
   text-align: center;
   margin-left:auto;
   margin-right:auto;
-  margin-top:8px;
-  margin-bottom:2px;
+  margin-top:1em;
+  margin-bottom:1em;
   padding: 0;
 }
 
@@ -91,9 +95,9 @@ p {
 }
 
 .grid-element {
-  height: 360px;
+  height: 300px;
   width: 300px;
-  margin: 20px;
+  margin: 10px;
 }
 
 .grid-element.project {
@@ -151,18 +155,22 @@ footer > a {
   margin: 25px;
 }
 
-/*
-#tc-right {
-  top: 0px;
-  right: 0px;
+
+#hidden-input {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  height: 0;
+  width: 0;
 }
 
-#tc-left {
-  top: 0px;
-  left: 0px;
+.header h2 {
+  display: inline-block;
+  margin: 10px 20px 0 0;
+  font-size: 20px;
 }
-*/
 
-#tc-shoot {
-  width: 90%;
+fieldset input {
+  width: auto;
+  display: inline-block;
 }
