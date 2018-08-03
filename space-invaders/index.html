@@ -23,34 +23,98 @@
     <div class="header">
       <a href="/">
         <h1>Space Invaders Remixed!</h1>
-        <div class="strapline">short, heavily annotated JavaScript programs</div>
       </a>
-      <label>Shooting Delay: <span id="shootingDelay-value"></span></label>
-      <input type="range" id="shootingDelay" name="shooting-delay" 
-           min="100" max="1000" value="0" step="50" />
+      <h2>
+        Score: <span id="score">0</span>
+      </h2>
+      <h2>
+        Lives: <span id="lives">3</span>
+      </h2>
+      <button id="reset-button">
+        New Game
+      </button>
     </div>
 
     <audio id="shoot-sound" src="https://cdn.hyperdev.com/57237357-0897-4eed-a5ec-b35c4432502c/shoot.mp3"></audio>
 
     <div class="grid-element project">
       <canvas id="space-invaders" width="300" height="300"></canvas>
-
-      <h2>Space Invaders</h2>
-      <p class="project-links">
-        <a href="docs/space-invaders.html">annotated code</a>
-        <a href="space-invaders.js">raw code</a>
-      </p>
     </div>
 
     <div>
       <p>
-        Move with the arrow keys.  Shoot with the S key.  Refresh to play again.
+        <strong>Directions: </strong>Move with the arrow keys or a mouse/touch.  Shoot with the S key or with click/tap.  Refresh to play again.
       </p>
+    </div>
+    
+    <div id="parameters">
+      
+      <h2>
+        Change Parameters Below:
+      </h2>
 
-      <p>
-        Demonstrates a game loop, collision detection, keyboard input,
-        drawing to the canvas and playing sounds.
-      </p>
+      <input type="checkbox" id="hidden-input" name="hidden-input">
+
+      <label>Player Shooting Delay: <span id="shootingDelay-value"></span></label>
+      <input type="range" id="shootingDelay" name="shooting-delay" 
+         min="0" max="1000" value="0" step="50" />
+
+      <label>Player Speed: <span id="playerSpeed-value"></span></label>
+      <input type="range" id="playerSpeed" name="player-speed" 
+         min="0" max="300" value="60" step="10" />
+
+      <label>Player Bullet Size: <span id="playerBulletSize-value"></span></label>
+      <input type="range" id="playerBulletSize" name="player-bullet-size" 
+         min="0" max="15" value="3" step="1" />
+      
+      <label>Player Shape:</label>
+      <fieldset>
+        <input type="radio" id="playerSquare" name="player-shape" checked />
+        <label for="playerSqaure">■</label><br>
+        <input type="radio" id="playerTriangle" name="player-shape" />
+        <label for="playerTriangle">▲</label><br>
+        <input type="radio" id="playerCircle" name="player-shape" />
+        <label for="playerCircle">⬤</label><br>
+      </fieldset>
+      
+
+      <label>Invader Size: <span id="invaderSize-value"></span></label>
+      <input type="range" id="invaderSize" name="invade-size" 
+         min="0" max="30" value="15" step="1" />
+
+      <label>Invader Speed: <span id="invaderSpeed-value"></span></label>
+      <input type="range" id="invaderSpeed" name="invader-speed" 
+         min="0" max="60" value="10" step="3" />
+
+      <label>Invader Patrol Distance: <span id="invaderPatrolDistance-value"></span></label>
+      <input type="range" id="invaderPatrolDistance" name="invader-patrol-distance" 
+         min="0" max="270" value="30" step="10" />
+
+      <label>Invader Shooting Frequency: <span id="invaderShootingFrequency-value"></span></label>
+      <input type="range" id="invaderShootingFrequency" name="invader-shooting-frequency" 
+         min="0" max="1000" value="50" step="10" />
+
+      <label>Invader Bullet Size: <span id="invaderBulletSize-value"></span></label>
+      <input type="range" id="invaderBulletSize" name="invader-bullet-size" 
+         min="0" max="15" value="3" step="1" />
+      
+      <label>Invader Bullet Speed: <span id="invaderBulletSpeed-value"></span></label>
+      <input type="range" id="invaderBulletSpeed" name="invader-bullet-speed" 
+         min="0" max="30" value="4" step="2" />
+
+      <label>Invader Bullet Direction Randomness: <span id="invaderBulletDirectionRandomness-value"></span></label>
+      <input type="range" id="invaderBulletDirectionRandomness" name="invader-bullet-direction-randomness" 
+         min="0" max="30" value="10" step="1" />
+      
+      <label>Lives:</label><input type="number" id="startingLives">
+      
+      <label>Mouse/Touch Control: <span id="mouseControl-value"></span></label>
+      <input type="checkbox" id="mouseControl" name="mouse-control" />
+      
+      
+      
+      <label>Custom Game URL: <span id="gameURL-value"></span></label>
+      <input type="text" id="gameURL" name="game-url" value="https://space-invaders-remixable.glitch.me/" />
     </div>
 
 

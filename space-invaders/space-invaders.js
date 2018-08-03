@@ -1,7 +1,26 @@
+var gameSpeed = 0//10000;
+
 var defaultParams = {
   shootingDelay: 100,
-  playerSpeed: 2
+  playerSpeed: 60,
+  playerBulletSize: 3,
+  invaderSize: 15,
+  invaderSpeed: 10,
+  invaderPatrolDistance: 30,
+  invaderBulletSize: 3,
+  invaderShootingFrequency: 50,
+  invaderBulletDirectionRandomness: 10,
+  invaderBulletSpeed: 4,
+  mouseControl: false,
+  startingLives: 3,
+  playerSquare: true,
+  playerTriangle: false,
+  playerCircle: false,
+  
+  gameURL: 'https://space-invaders-remixable.glitch.me/',
 };
+
+
 
 function getParamsFromHash(defaultParams) {
   var params = defaultParams;
@@ -16,21 +35,33 @@ function getParamsFromHash(defaultParams) {
 
     for (var i in paramStringArray) {
       var paramArray = paramStringArray[i].split('=');
-      params[paramArray[0]] = paramArray[1];
+      params[paramArray[0]] = parseInt(paramArray[1]);
     }
     
   }
-  console.log(params);
+  
   return params;
 }
 
-var params = getParamsFromHash(defaultParams);
+function setSlidersFromHash(hashParams) {
+  for (var i in hashParams) {
+    if (
+      i != 'gameURL' &&
+      i != 'mouseControl' &&
+      i != 'drawPlayerBody' &&
+      i != 'drawInvaderBody'
+    ) {
+      var e = document.getElementById(i)
+    e.value = hashParams[i];
+    }
 
+  }
+}
 
-function changeParam(paramId, setValue) {
+function setChangeParam(paramId, setValue) {
   var paramInput = document.getElementById(paramId);
-  
   var paramValue;
+  
   if (setValue) {
     paramValue = setValue;
     paramInput.value = paramValue;
@@ -39,69 +70,105 @@ function changeParam(paramId, setValue) {
   }
   
   var paramValueDisplay = document.getElementById(paramId + '-value');
-  paramValueDisplay.innerHTML = paramValue; 
+  if (paramValueDisplay) {
+    paramValueDisplay.innerHTML = paramValue;
+  }
   
   paramInput.onchange = function(e) {
     e.preventDefault();
-    paramValueDisplay.innerHTML = this.value;
-    params[paramId] = this.value;
+    if (paramValueDisplay) {
+      paramValueDisplay.innerHTML = this.value;
+    }
+    
+    if (paramInput === playerTriangleInput) {
+      alert("TRIANGLE!");
+    }
+    
+    
+    params[paramId] = parseInt(this.value);
+    document.getElementById("hidden-input").focus();
   }
 }
 
-changeParam("shootingDelay", params.shootingDelay);
+function setGameURL(params) {
+  var gameURL = params.gameURL.split(".me/")[0] + ".me/";
+  
+  var hash = "";
+  for (var i in params) {
+    if (
+      i != 'gameURL' &&
+      i != 'mouseControl' &&
+      i != 'drawPlayerBody' &&
+      i != 'drawInvaderBody'
+    ) {
+       hash += '' + i + '=' + params[i] + '&';
+    }
+  }
+
+  hash = hash.substr(0, hash.length - 1);
+  gameURL += ('#' + hash);
+  
+  window.location.hash = hash;
+  document.getElementById('gameURL').value = gameURL;
+  params.gameURL = gameURL;
+  return params;
+}
+
+var params = getParamsFromHash(defaultParams);
+for (var i in params) {
+  if (i != 'drawPlayerBody' && i != 'drawInvaderBody') {
+    setChangeParam(i, params[i]);
+  }
+}
+
+params = setGameURL(params);
+setSlidersFromHash(params);
 
 var shootThisFrame = false;
+var betweenLevels = false;
 
 var cursorX;
 var cursorY;
 
-function getMousePos(canvas, evt) {
-  var rect = canvas.getBoundingClientRect();
-  return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top
-  };
+var gameOver = false;
+var levelOver = false;
+
+//var canvas = document.getElementById('space-invaders');
+//var context = canvas.getContext('2d');
+
+var mouseControlCheckbox = document.getElementById('mouseControl');
+
+var playerSquareInput = document.getElementById('playerSquare');
+var playerTriangleInput = document.getElementById('playerTriangle');
+var playerCircleInput = document.getElementById('playerCircle');
+
+var canvas;
+var screen;
+
+function drawRectBody(x, y, sizeX, sizeY) {
+  screen.fillRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
 }
 
-function printXY(coords) {
-  cursorX = coords.x;
-  cursorY = coords.y;
-  //console.log(coords.x + ", " + coords.y);
+function drawTriBody(x, y, sizeX, sizeY) {
+  screen.beginPath();
+  screen.moveTo(x, y + sizeY / 2);
+  screen.lineTo(x + sizeX / 2, y - sizeY / 2);
+  screen.lineTo(x - sizeX / 2, y - sizeY / 2);
+  screen.lineTo(x, y + sizeY / 2);
+  screen.fill();
+  //screen.strokeStyle = 'red';
+  //screen.strokeRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
 }
 
-var canvas = document.getElementById('space-invaders');
-var context = canvas.getContext('2d');
+function drawInvTriBody(x, y, sizeX, sizeY) {
+  drawTriBody(x, y, sizeX, -sizeY)
+}
 
-canvas.addEventListener('mousemove', function(e) {
-  e.preventDefault();
-  var mousePos = getMousePos(canvas, e);
-  printXY(mousePos);
-}, false);
-
-var shootThisFrame = false;
-
-canvas.addEventListener('touchstart', function(e) {
-  e.preventDefault();
-  var mousePos = getMousePos(canvas, e);
-  printXY(mousePos);
-  shootThisFrame = true;
-}, false);
-
-
-canvas.addEventListener('touchmove', function(e) {
-  e.preventDefault();
-  e = e.touches[0];
-  var mousePos = getMousePos(canvas, e);
-  printXY(mousePos);
-}, false);
-
-
-
-
-canvas.addEventListener('click', function(e) {
-  e.preventDefault();
-  shootThisFrame = true;
-});
+function drawCircBody(x, y, sizeX, sizeY) {
+  screen.beginPath();
+  screen.arc(x, y, sizeX / 2, 0, Math.PI * 2, true);
+  screen.fill();
+}
 
 
 
@@ -112,17 +179,63 @@ canvas.addEventListener('click', function(e) {
 
   // **new Game()** Creates the game object with the game state and logic.
   var Game = function() {
+    
+    this.params = params;
+    
+    this.score = 0;
+    this.lives = this.params.startingLives;
 
     // In index.html, there is a canvas tag that the game will be drawn in.
     // Grab that canvas out of the DOM.
-    var canvas = document.getElementById("space-invaders");
+    canvas = document.getElementById("space-invaders");
 
     // Get the drawing context.  This contains functions that let you draw to the canvas.
-    var screen = canvas.getContext('2d');
+    screen = canvas.getContext('2d');
+    
+    
+    canvas.addEventListener('mousemove', function(e) {
+      e.preventDefault();
+      var mousePos = getMousePos(canvas, e);
+      printXY(mousePos);
+    }, false);
+
+    canvas.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      e = e.touches[0];
+      var mousePos = getMousePos(canvas, e);
+      printXY(mousePos);
+    }, false);
+
+    canvas.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      var mousePos = getMousePos(canvas, e);
+      printXY(mousePos);
+      shootThisFrame = true;
+    }, false);
+
+
+    canvas.addEventListener('click', function(e) {
+      e.preventDefault();
+      shootThisFrame = true;
+    });
+    
+    function getMousePos(canvas, evt) {
+      var rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
+
+    function printXY(coords) {
+      cursorX = coords.x;
+      cursorY = coords.y;
+    }
 
     // Note down the dimensions of the canvas.  These are used to
     // place game bodies.
     var gameSize = { x: canvas.width, y: canvas.height };
+    this.gameSize = gameSize;
 
     // Create the bodies array to hold the player, invaders and bullets.
     this.bodies = [];
@@ -130,6 +243,8 @@ canvas.addEventListener('click', function(e) {
     // Add the invaders to the bodies array.
     this.bodies = this.bodies.concat(createInvaders(this));
 
+    
+    
     // Add the player to the bodies array.
     this.bodies = this.bodies.concat(new Player(this, gameSize));
 
@@ -137,8 +252,9 @@ canvas.addEventListener('click', function(e) {
     // Get the shoot sound from the DOM and store it on the game object.
     this.shootSound = document.getElementById('shoot-sound');
     
+    this.scoreCounter = document.getElementById('score');
+    this.livesCounter = document.getElementById('lives');
     
-    //this.shootingDelay = 500;
     this.shootingAllowed = true;
 
 
@@ -146,7 +262,13 @@ canvas.addEventListener('click', function(e) {
 
     // Main game tick function.  Loops forever, running 60ish times a second.
     var tick = function() {
-
+      //console.log("TICK!");
+      //console.log(currentGame);
+      
+      self.scoreCounter.innerHTML = self.score;
+      self.livesCounter.innerHTML = self.lives;
+      
+      // Check for changed parameters.
       self.updateParams();
       // Update game state.
       self.update();
@@ -155,8 +277,18 @@ canvas.addEventListener('click', function(e) {
       self.draw(screen, gameSize);
 
       // Queue up the next call to tick with the browser.
-      requestAnimationFrame(tick);
-    };
+      //requestAnimationFrame(tick);
+      
+      if (!gameOver) {
+        setTimeout(function() {
+          requestAnimationFrame(tick);
+        }, gameSpeed);
+      } else {
+        gameOver = false;
+        currentGame = new Game();
+      }
+      
+    }//.bind(this);
 
     // Run the first game tick.  All future calls will be scheduled by
     // the tick() function itself.
@@ -167,11 +299,26 @@ canvas.addEventListener('click', function(e) {
     
     
     updateParams: function() {
+      
       if (params) {
         for (var i in params) {
-          this[i] = params[i];
+          this.params[i] = params[i];
         }
       }
+      
+      // Update Invader Size
+      for (var i in this.bodies) {
+        if(this.bodies[i] instanceof Invader) {
+          var invader = this.bodies[i];
+          invader.size.x = this.params.invaderSize;
+          invader.size.y = this.params.invaderSize;
+        }
+      }
+      
+      // Update Mouse Control
+      this.params.mouseControl = mouseControlCheckbox.checked
+      this.params = setGameURL(this.params);
+      //console.log(JSON.stringify(params));
     },
     
 
@@ -184,17 +331,50 @@ canvas.addEventListener('click', function(e) {
       // `notCollidingWithAnything` returns true if passed body
       // is not colliding with anything.
       var notCollidingWithAnything = function(b1) {
-        return self.bodies.filter(function(b2) { return colliding(b1, b2); }).length === 0;
+        var notCollisionStatus = self.bodies.filter(function(b2) { return colliding(b1, b2); }).length === 0;
+   
+        if (!notCollisionStatus) {
+          var bodyGame = b1.game;
+          if (b1 instanceof Invader) {
+            bodyGame.score++;
+          } else if (b1 instanceof Player) {
+            bodyGame.lives--;
+            setTimeout(function() {
+              bodyGame.bodies = bodyGame.bodies.concat(new Player(bodyGame, bodyGame.gameSize));
+            }, 1000);
+          }
+        }
+        
+        return notCollisionStatus;
       };
+  
 
       // Throw away bodies that are colliding with something. They
       // will never be updated or draw again.
       this.bodies = this.bodies.filter(notCollidingWithAnything);
 
       // Call update on every body.
+      
+      var clearedInvaders = true;
+      
       for (var i = 0; i < this.bodies.length; i++) {
-        this.bodies[i].update();
+        var nextBody = this.bodies[i];
+        if (nextBody instanceof Invader) {
+          clearedInvaders = false;
+        }
+        nextBody.update();
       }
+      
+      if (clearedInvaders && !betweenLevels) {
+        betweenLevels = true;
+        this.score += 10;
+        setTimeout(function() {
+          this.bodies = this.bodies.concat(createInvaders(this));
+          betweenLevels = false;
+        }.bind(this), 1000);
+      }
+      
+      
     },
 
     // **draw()** draws the game.
@@ -204,7 +384,7 @@ canvas.addEventListener('click', function(e) {
 
       // Draw each body as a rectangle.
       for (var i = 0; i < this.bodies.length; i++) {
-        drawRect(screen, this.bodies[i]);
+        drawBody(screen, this.bodies[i]);
       }
     },
 
@@ -216,7 +396,7 @@ canvas.addEventListener('click', function(e) {
         // Keep `b` if it is an invader, if it is in the same column
         // as `invader`, and if it is somewhere below `invader`.
         return b instanceof Invader &&
-          Math.abs(invader.center.x - b.center.x) < b.size.x &&
+          Math.abs(invader.center.x - b.center.x) < b.size.x  &&
           b.center.y > invader.center.y;
       }).length > 0;
     },
@@ -234,26 +414,31 @@ canvas.addEventListener('click', function(e) {
   var Invader = function(game, center) {
     this.game = game;
     this.center = center;
-    this.size = { x: 15, y: 15 };
+    
+    //console.log(JSON.stringify(game));
+    this.size = { x: game.params.invaderSize, y: game.params.invaderSize };
 
     // Invaders patrol from left to right and back again.
     // `this.patrolX` records the current (relative) position of the
     // invader in their patrol.  It starts at 0, increases to 40, then
     // decreases to 0, and so forth.
     this.patrolX = 0;
+    //this.patrolMax = this.game.params.invaderPatrolDistance;
 
     // The x speed of the invader.  A positive value moves the invader
     // right. A negative value moves it left.
-    this.speedX = 0.3;
+    //this.speedX = this.game.params.invaderSpeed / 30;
   };
 
   Invader.prototype = {
 
     // **update()** updates the state of the invader for a single tick.
     update: function() {
-
+      var setSpeed = this.game.params.invaderSpeed / 30;
+      this.speedX = this.speedX > 0 ? setSpeed : -setSpeed;
+      this.patrolMax = this.game.params.invaderPatrolDistance;
       // If the invader is outside the bounds of their patrol...
-      if (this.patrolX < 0 || this.patrolX > 30) {
+      if (this.patrolX < (-this.patrolMax + 30) || this.patrolX > this.patrolMax) {
 
         // ... reverse direction of movement.
         this.speedX = -this.speedX;
@@ -261,13 +446,27 @@ canvas.addEventListener('click', function(e) {
 
       // If coin flip comes up and no friends below in this
       // invader's column...
-      if (Math.random() > 0.995 &&
+      
+      var chanceToShoot = Math.random() + (this.game.params.invaderShootingFrequency / 10000);
+      if (chanceToShoot > 1 &&
           !this.game.invadersBelow(this)) {
-
+      
+        
         // ... create a bullet just below the invader that will move
         // downward...
-        var bullet = new Bullet({ x: this.center.x, y: this.center.y + this.size.y / 2 },
-                                { x: Math.random() - 0.5, y: 2 });
+        
+        var bulletSize = {
+          x: this.game.params.invaderBulletSize,
+          y: this.game.params.invaderBulletSize
+        }
+        
+        
+        var bulletDirectionRandomness = this.game.params.invaderBulletDirectionRandomness / 10;
+        var bulletDirection = (bulletDirectionRandomness * (2 * Math.random())) - bulletDirectionRandomness;
+        var bulletSpeed = this.game.params.invaderBulletSpeed / 4;
+        
+        var bullet = new Bullet({ x: this.center.x, y: this.center.y + (this.size.y / 2) + (bulletSize.y / 2) },
+                                { x: bulletDirection * bulletSpeed, y:  2 * bulletSpeed}, bulletSize);
 
         // ... and add the bullet to the game.
         this.game.addBody(bullet);
@@ -288,6 +487,7 @@ canvas.addEventListener('click', function(e) {
     /* Parameter */
     
     var numberOfInvaders = 24;
+    //var numberOfInvaders = 0;
     var invaderGroupWidth = 8;
     var invaderGroupHeight = 3;
     if (params) {
@@ -336,21 +536,36 @@ canvas.addEventListener('click', function(e) {
       if (this.keyboarder.isDown(this.keyboarder.KEYS.LEFT)) {
 
         // ... move left.
-        this.center.x -= 2;
-
+        this.center.x -= this.game.params.playerSpeed / 30;
       } else if (this.keyboarder.isDown(this.keyboarder.KEYS.RIGHT)) {
-        this.center.x += 2;
-      } else if (this.center.x > cursorX) {
-        this.center.x -= 2;
-      } else if (this.center.x < cursorX) {
-        this.center.x += 2;
+        this.center.x += this.game.params.playerSpeed / 30;
+      }
+      if (this.game.params.mouseControl) {
+        if (this.center.x > cursorX) {
+          this.center.x -= this.game.params.playerSpeed / 30;
+        } else if (this.center.x < cursorX) {
+          this.center.x += this.game.params.playerSpeed / 30;
+        }
+      }
+      
+      
+      // Don't allow player to go off the screen      
+      if (this.center.x > 290) {
+        this.center.x = 290;
+      }
+      if (this.center.x < 10) {
+        this.center.x = 10;
       }
 
       // If S key is down...
       if (this.keyboarder.isDown(this.keyboarder.KEYS.S) || shootThisFrame) {
         // ... create a bullet just above the player that will move upwards...
+        var bulletSize = {
+          x: this.game.params.playerBulletSize,
+          y: this.game.params.playerBulletSize
+        }
         var bullet = new Bullet({ x: this.center.x, y: this.center.y - this.size.y - 10 },
-                                { x: 0, y: -7 });
+                                { x: 0, y: -7 }, bulletSize);
 
         // ... add the bullet to the game...
         
@@ -364,8 +579,7 @@ canvas.addEventListener('click', function(e) {
           this.game.shootSound.play();
           
           this.game.shootingAllowed = false;
-          console.log(this.game.shootingDelay);
-          setTimeout(() => this.game.shootingAllowed = true, this.game.shootingDelay)
+          setTimeout(() => this.game.shootingAllowed = true, this.game.params.shootingDelay)
         }
         shootThisFrame = false;
       }
@@ -376,9 +590,9 @@ canvas.addEventListener('click', function(e) {
   // ------
 
   // **new Bullet()** creates a new bullet.
-  var Bullet = function(center, velocity) {
+  var Bullet = function(center, velocity, size) {
     this.center = center;
-    this.size = { x: 3, y: 3 };
+    this.size = { x: size.x, y: size.y };
     this.velocity = velocity;
   };
 
@@ -425,10 +639,23 @@ canvas.addEventListener('click', function(e) {
   // Other functions
   // ---------------
 
-  // **drawRect()** draws passed body as a rectangle to `screen`, the drawing context.
-  var drawRect = function(screen, body) {
-    screen.fillRect(body.center.x - body.size.x / 2, body.center.y - body.size.y / 2,
-                    body.size.x, body.size.y);
+  // **drawBody()** draws passed body as a rectangle to `screen`, the drawing context.
+  var drawBody = function(screen, body) {
+    
+    var drawShapeBody;;
+    
+    if (body instanceof Invader) {
+      //drawShapeBody = body.game.params.drawInvaderBody;
+      drawShapeBody = drawRectBody;
+    } else if (body instanceof Player) {
+      //drawShapeBody = body.game.params.drawPlayerBody;
+      drawShapeBody = drawRectBody;
+    } else {
+      drawShapeBody = drawRectBody;
+    }
+    
+    drawShapeBody(body.center.x, body.center.y, body.size.x, body.size.y);  
+    
   };
 
   // **colliding()** returns true if two passed bodies are colliding.
@@ -441,20 +668,32 @@ canvas.addEventListener('click', function(e) {
   // 4. Left of `b1` is to the right of the right of `b2`.
   // 5. Top of `b1` is below the bottom of `b2`.
   var colliding = function(b1, b2) {
-    return !(
+    var collisionDetected = !(
       b1 === b2 ||
-        b1.center.x + b1.size.x / 2 < b2.center.x - b2.size.x / 2 ||
-        b1.center.y + b1.size.y / 2 < b2.center.y - b2.size.y / 2 ||
-        b1.center.x - b1.size.x / 2 > b2.center.x + b2.size.x / 2 ||
-        b1.center.y - b1.size.y / 2 > b2.center.y + b2.size.y / 2
-    );
+        b1.center.x + b1.size.x / 2 < b2.center.x - ((b2.size.x - 2) / 2) ||
+        b1.center.y + b1.size.y / 2 < b2.center.y - ((b2.size.y - 2) / 2) ||
+        b1.center.x - b1.size.x / 2 > b2.center.x + ((b2.size.x - 2) / 2) ||
+        b1.center.y - b1.size.y / 2 > b2.center.y + ((b2.size.y - 2) / 2)
+    )
+    return collisionDetected;
   };
 
   // Start game
   // ----------
 
+  
   // When the DOM is ready, create (and start) the game.
   window.addEventListener('load', function() {
-    new Game();
+    
+    currentGame = new Game();
   });
+  
+  var resetButton = document.getElementById('reset-button');
+  resetButton.addEventListener('click', function() {
+    currentGame = null;
+    gameOver = true;
+  });
+  
 })();
+
+var currentGame;
