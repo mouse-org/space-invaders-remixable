@@ -642,7 +642,7 @@ function drawCircBody(x, y, sizeX, sizeY) {
   // **drawBody()** draws passed body as a rectangle to `screen`, the drawing context.
   var drawBody = function(screen, body) {
     
-    var drawShapeBody;;
+    var drawShapeBody;
     
     if (body instanceof Invader) {
       //drawShapeBody = body.game.params.drawInvaderBody;
