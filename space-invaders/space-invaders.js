@@ -1,6 +1,19 @@
 var gameSpeed = 0//10000;
+var gamePaused = false;
 
-var defaultParams = {
+var shootThisFrame = false;
+var betweenLevels = false;
+
+var cursorX;
+var cursorY;
+
+var gameOver = false;
+var levelOver = false;
+
+var canvas;
+var screen;
+
+const defaultParams = {
   shootingDelay: 100,
   playerSpeed: 60,
   playerBulletSize: 3,
@@ -16,90 +29,80 @@ var defaultParams = {
   playerSquare: true,
   playerTriangle: false,
   playerCircle: false,
+  invaderColor: "#EFEFAF",
+  playerColor: "#DFDFDF",
   
   gameURL: 'https://space-invaders-remixable.glitch.me/',
 };
 
 
-
-function getParamsFromHash(defaultParams) {
-  var params = defaultParams;
+function getParamsFromHash() {
+  var hashParams = {};
   
   if(window.location.hash) {
-    console.log(window.location.hash)
     var hash = window.location.hash;
     var paramString = hash.substring(1, hash.length);
-    console.log(paramString);
     var paramStringArray = paramString.split('&');
-    console.log(paramStringArray);
 
     for (var i in paramStringArray) {
       var paramArray = paramStringArray[i].split('=');
-      params[paramArray[0]] = parseInt(paramArray[1]);
+      // What about non ints
+      hashParams[paramArray[0]] = paramArray[1];
     }
-    
   }
   
-  return params;
+  console.log("Params from Hash:\n " + JSON.stringify(hashParams));
+  
+  return hashParams;
 }
 
-function setSlidersFromHash(hashParams) {
-  for (var i in hashParams) {
-    if (
-      i != 'gameURL' &&
-      i != 'mouseControl' &&
-      i != 'drawPlayerBody' &&
-      i != 'drawInvaderBody'
-    ) {
-      var e = document.getElementById(i)
-    e.value = hashParams[i];
-    }
+function updateInputsAndSetListeners(paramId, paramValue, callback) {
+  //var paramValue = params[paramId];
 
-  }
-}
-
-function setChangeParam(paramId, setValue) {
+  // Set values of all input elements to the default from defaultParams
   var paramInput = document.getElementById(paramId);
-  var paramValue;
-  
-  if (setValue) {
-    paramValue = setValue;
-    paramInput.value = paramValue;
-  } else {
-    paramValue = paramInput.value;
+  setInputValue(paramInput, paramValue);
+
+  // Set the <span> in the label of each element to show the value
+  var valueElement = document.getElementById(paramId + '-value');
+  // Text, shape inputs don't have a corresponding value element
+  if (valueElement) {
+    setLabelValue(valueElement, paramValue);
   }
-  
-  var paramValueDisplay = document.getElementById(paramId + '-value');
-  if (paramValueDisplay) {
-    paramValueDisplay.innerHTML = paramValue;
-  }
-  
+
+  // Set listener for updated params
   paramInput.onchange = function(e) {
     e.preventDefault();
-    if (paramValueDisplay) {
-      paramValueDisplay.innerHTML = this.value;
+    var newValue = this.value;
+    if (valueElement) {
+      setLabelValue(valueElement, newValue);
     }
-    
-    if (paramInput === playerTriangleInput) {
-      alert("TRIANGLE!");
-    }
-    
-    
-    params[paramId] = parseInt(this.value);
+    callback(paramId, newValue)
     document.getElementById("hidden-input").focus();
   }
 }
 
-function setGameURL(params) {
+function getInputValue(element) {
+  
+}
+
+function setInputValue(element, value) {
+  element.value = value;
+}
+
+function setLabelValue(valueElement, value) {
+  valueElement.innerHTML = value;
+}
+
+
+function setGameUrlAndHashFrom(params) {
   var gameURL = params.gameURL.split(".me/")[0] + ".me/";
   
   var hash = "";
   for (var i in params) {
     if (
       i != 'gameURL' &&
-      i != 'mouseControl' &&
-      i != 'drawPlayerBody' &&
-      i != 'drawInvaderBody'
+      i != 'mouseControl'
     ) {
        hash += '' + i + '=' + params[i] + '&';
     }
@@ -114,61 +117,23 @@ function setGameURL(params) {
   return params;
 }
 
-var params = getParamsFromHash(defaultParams);
-for (var i in params) {
-  if (i != 'drawPlayerBody' && i != 'drawInvaderBody') {
-    setChangeParam(i, params[i]);
-  }
-}
 
-params = setGameURL(params);
-setSlidersFromHash(params);
+// Read params from URL Hash:
+var hashParams = getParamsFromHash()
 
-var shootThisFrame = false;
-var betweenLevels = false;
-
-var cursorX;
-var cursorY;
-
-var gameOver = false;
-var levelOver = false;
-
-//var canvas = document.getElementById('space-invaders');
-//var context = canvas.getContext('2d');
-
+// Store mouse control outside of Game so it doesn't copy to url:
 var mouseControlCheckbox = document.getElementById('mouseControl');
 
-var playerSquareInput = document.getElementById('playerSquare');
-var playerTriangleInput = document.getElementById('playerTriangle');
-var playerCircleInput = document.getElementById('playerCircle');
 
-var canvas;
-var screen;
 
-function drawRectBody(x, y, sizeX, sizeY) {
-  screen.fillRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
-}
 
-function drawTriBody(x, y, sizeX, sizeY) {
-  screen.beginPath();
-  screen.moveTo(x, y + sizeY / 2);
-  screen.lineTo(x + sizeX / 2, y - sizeY / 2);
-  screen.lineTo(x - sizeX / 2, y - sizeY / 2);
-  screen.lineTo(x, y + sizeY / 2);
-  screen.fill();
-  //screen.strokeStyle = 'red';
-  //screen.strokeRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
-}
+//var playerSquareInput = document.getElementById('playerSquare');
+//var playerTriangleInput = document.getElementById('playerTriangle');
+//var playerCircleInput = document.getElementById('playerCircle');
 
-function drawInvTriBody(x, y, sizeX, sizeY) {
-  drawTriBody(x, y, sizeX, -sizeY)
-}
 
-function drawCircBody(x, y, sizeX, sizeY) {
-  screen.beginPath();
-  screen.arc(x, y, sizeX / 2, 0, Math.PI * 2, true);
-  screen.fill();
-}
+
+
 
 
 
@@ -180,7 +145,23 @@ function drawCircBody(x, y, sizeX, sizeY) {
   // **new Game()** Creates the game object with the game state and logic.
   var Game = function() {
     
-    this.params = params;
+    this.params = Object.assign({}, defaultParams, hashParams);
+    console.log("THIS.PARAMS");
+    console.log(this.params);
+    
+    // Set listeners for each param in defaultParams
+    for (var i in this.params) {
+      updateInputsAndSetListeners(i, this.params[i], function(paramId, newValue) {
+        this.params[paramId] = newValue;
+        this.params = setGameUrlAndHashFrom(this.params);
+      }.bind(this));
+    }
+    
+    this.params = setGameUrlAndHashFrom(this.params);
+                                  
+    
+    gamePaused = false;
+    //this.params = params;
     
     this.score = 0;
     this.lives = this.params.startingLives;
@@ -264,28 +245,34 @@ function drawCircBody(x, y, sizeX, sizeY) {
     var tick = function() {
       //console.log("TICK!");
       //console.log(currentGame);
+      //console.log(gamePaused);
       
-      self.scoreCounter.innerHTML = self.score;
-      self.livesCounter.innerHTML = self.lives;
-      
-      // Check for changed parameters.
-      self.updateParams();
-      // Update game state.
-      self.update();
+      if (!gamePaused) {
+        self.scoreCounter.innerHTML = self.score;
+        self.livesCounter.innerHTML = self.lives;
 
-      // Draw game bodies.
-      self.draw(screen, gameSize);
+        // Check for changed parameters.
+        self.updateParams();
+        // Update game state.
+        self.update();
 
-      // Queue up the next call to tick with the browser.
-      //requestAnimationFrame(tick);
-      
-      if (!gameOver) {
-        setTimeout(function() {
-          requestAnimationFrame(tick);
-        }, gameSpeed);
+        // Draw game bodies.
+        self.draw(screen, gameSize);
+
+        // Queue up the next call to tick with the browser.
+        //requestAnimationFrame(tick);
+        if (!gameOver) {
+          setTimeout(function() {
+            requestAnimationFrame(tick);
+          }, gameSpeed);
+        } else {
+          gameOver = false;
+          currentGame = new Game();
+        }
       } else {
-        gameOver = false;
-        currentGame = new Game();
+        setTimeout(function() {
+          tick();
+        }, gameSpeed);
       }
       
     }//.bind(this);
@@ -300,12 +287,6 @@ function drawCircBody(x, y, sizeX, sizeY) {
     
     updateParams: function() {
       
-      if (params) {
-        for (var i in params) {
-          this.params[i] = params[i];
-        }
-      }
-      
       // Update Invader Size
       for (var i in this.bodies) {
         if(this.bodies[i] instanceof Invader) {
@@ -317,7 +298,7 @@ function drawCircBody(x, y, sizeX, sizeY) {
       
       // Update Mouse Control
       this.params.mouseControl = mouseControlCheckbox.checked
-      this.params = setGameURL(this.params);
+      ///this.params = setGameURL(this.params);
       //console.log(JSON.stringify(params));
     },
     
@@ -490,6 +471,9 @@ function drawCircBody(x, y, sizeX, sizeY) {
     //var numberOfInvaders = 0;
     var invaderGroupWidth = 8;
     var invaderGroupHeight = 3;
+    
+    /*
+    ### Figure out number of invaders
     if (params) {
       if (params.height && params.width) {
         invaderGroupWidth = params.width;
@@ -497,6 +481,7 @@ function drawCircBody(x, y, sizeX, sizeY) {
         numberOfInvaders = invaderGroupWidth * invaderGroupHeight;
       }
     }
+    */
     
     
     for (var i = 0; i < numberOfInvaders; i++) {
@@ -646,17 +631,45 @@ function drawCircBody(x, y, sizeX, sizeY) {
     
     if (body instanceof Invader) {
       //drawShapeBody = body.game.params.drawInvaderBody;
-      drawShapeBody = drawRectBody;
+      drawShapeBody = drawRectBody.bind(this, body.game.params.invaderColor);
     } else if (body instanceof Player) {
       //drawShapeBody = body.game.params.drawPlayerBody;
-      drawShapeBody = drawRectBody;
+      drawShapeBody = drawRectBody.bind(this, body.game.params.playerColor);
     } else {
-      drawShapeBody = drawRectBody;
+      drawShapeBody = drawRectBody.bind(this, "#FFF");
     }
     
     drawShapeBody(body.center.x, body.center.y, body.size.x, body.size.y);  
     
   };
+  
+  function drawRectBody(color, x, y, sizeX, sizeY) {
+    screen.fillStyle = color;
+    screen.fillRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
+  }
+
+  function drawTriBody(color, x, y, sizeX, sizeY) {
+    screen.fillStyle = color;
+    screen.beginPath();
+    screen.moveTo(x, y + sizeY / 2);
+    screen.lineTo(x + sizeX / 2, y - sizeY / 2);
+    screen.lineTo(x - sizeX / 2, y - sizeY / 2);
+    screen.lineTo(x, y + sizeY / 2);
+    screen.fill();
+    //screen.strokeStyle = 'red';
+    //screen.strokeRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
+  }
+
+  function drawInvTriBody(color, x, y, sizeX, sizeY) {
+    drawTriBody(color, x, y, sizeX, -sizeY)
+  }
+
+  function drawCircBody(color, x, y, sizeX, sizeY) {
+    screen.fillStyle = color;
+    screen.beginPath();
+    screen.arc(x, y, sizeX / 2, 0, Math.PI * 2, true);
+    screen.fill();
+  }
 
   // **colliding()** returns true if two passed bodies are colliding.
   // The approach is to test for five situations.  If any are true,
@@ -694,6 +707,18 @@ function drawCircBody(x, y, sizeX, sizeY) {
     gameOver = true;
   });
   
+  var pauseButton = document.getElementById('pause-button');
+  pauseButton.addEventListener('click', function() {
+    if (gamePaused) {
+      gamePaused = false;
+      pauseButton.innerHTML = 'Pause';
+    } else {
+      gamePaused = true;
+      pauseButton.innerHTML = 'Start';
+    }
+  });
+  
+
 })();
 
 var currentGame;

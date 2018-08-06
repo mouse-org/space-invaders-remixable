@@ -174,3 +174,7 @@ fieldset input {
   width: auto;
   display: inline-block;
 }
+
+#space-invaders {
+  background-color: #000;
+}

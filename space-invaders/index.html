@@ -33,6 +33,9 @@
       <button id="reset-button">
         New Game
       </button>
+      <button id="pause-button">
+        Pause
+      </button>
     </div>
 
     <audio id="shoot-sound" src="https://cdn.hyperdev.com/57237357-0897-4eed-a5ec-b35c4432502c/shoot.mp3"></audio>
@@ -63,20 +66,22 @@
       <input type="range" id="playerSpeed" name="player-speed" 
          min="0" max="300" value="60" step="10" />
 
-      <label>Player Bullet Size: <span id="playerBulletSize-value"></span></label>
+      <label>Player Blaster Size: <span id="playerBulletSize-value"></span></label>
       <input type="range" id="playerBulletSize" name="player-bullet-size" 
          min="0" max="15" value="3" step="1" />
       
       <label>Player Shape:</label>
       <fieldset>
-        <input type="radio" id="playerSquare" name="player-shape" checked />
+        <input type="radio" id="playerSquare" name="player-shape-square" checked />
         <label for="playerSqaure">■</label><br>
-        <input type="radio" id="playerTriangle" name="player-shape" />
+        <input type="radio" id="playerTriangle" name="player-shape-triangle" />
         <label for="playerTriangle">▲</label><br>
-        <input type="radio" id="playerCircle" name="player-shape" />
+        <input type="radio" id="playerCircle" name="player-shape-circle" />
         <label for="playerCircle">⬤</label><br>
       </fieldset>
       
+      <label>Player Color: <span id="playerColor-value"></span></label>
+      <input type="color" id="playerColor" name="player-color" value="#DFDFDF">
 
       <label>Invader Size: <span id="invaderSize-value"></span></label>
       <input type="range" id="invaderSize" name="invade-size" 
@@ -94,17 +99,30 @@
       <input type="range" id="invaderShootingFrequency" name="invader-shooting-frequency" 
          min="0" max="1000" value="50" step="10" />
 
-      <label>Invader Bullet Size: <span id="invaderBulletSize-value"></span></label>
+      <label>Invader Blaster Size: <span id="invaderBulletSize-value"></span></label>
       <input type="range" id="invaderBulletSize" name="invader-bullet-size" 
          min="0" max="15" value="3" step="1" />
       
-      <label>Invader Bullet Speed: <span id="invaderBulletSpeed-value"></span></label>
+      <label>Invader Blaster Speed: <span id="invaderBulletSpeed-value"></span></label>
       <input type="range" id="invaderBulletSpeed" name="invader-bullet-speed" 
          min="0" max="30" value="4" step="2" />
 
-      <label>Invader Bullet Direction Randomness: <span id="invaderBulletDirectionRandomness-value"></span></label>
+      <label>Invader Blaster Direction Randomness: <span id="invaderBulletDirectionRandomness-value"></span></label>
       <input type="range" id="invaderBulletDirectionRandomness" name="invader-bullet-direction-randomness" 
          min="0" max="30" value="10" step="1" />
+      
+      <label>Invader Shape:</label>
+      <fieldset>
+        <input type="radio" id="invaderSquare" name="invader-shape-square" checked />
+        <label for="invaderSqaure">■</label><br>
+        <input type="radio" id="invaderTriangle" name="invader-shape-triangle" />
+        <label for="invaderTriangle">▲</label><br>
+        <input type="radio" id="invaderCircle" name="invader-shape-circle" />
+        <label for="invaderCircle">⬤</label><br>
+      </fieldset>
+      
+      <label>Invader Color: <span id="invaderColor-value"></span></label>
+      <input type="color" id="invaderColor" name="invader-color" value="#EFEFAF">
       
       <label>Lives:</label><input type="number" id="startingLives">
       
