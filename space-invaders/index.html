@@ -71,12 +71,12 @@
          min="0" max="15" value="3" step="1" />
       
       <label>Player Shape:</label>
-      <fieldset>
-        <input type="radio" id="playerSquare" name="player-shape-square" checked />
+      <fieldset id="playerShape">
+        <input type="radio" id="playerSquare" name="playerShape" value="square" checked />
         <label for="playerSqaure">■</label><br>
-        <input type="radio" id="playerTriangle" name="player-shape-triangle" />
+        <input type="radio" id="playerTriangle" name="playerShape" value="triangle" />
         <label for="playerTriangle">▲</label><br>
-        <input type="radio" id="playerCircle" name="player-shape-circle" />
+        <input type="radio" id="playerCircle" name="playerShape" value="circle" />
         <label for="playerCircle">⬤</label><br>
       </fieldset>
       
@@ -112,13 +112,23 @@
          min="0" max="30" value="10" step="1" />
       
       <label>Invader Shape:</label>
-      <fieldset>
-        <input type="radio" id="invaderSquare" name="invader-shape-square" checked />
+      <fieldset id="invaderShape">
+        <input type="radio" id="invaderSquare" name="invaderShape" value="square" checked />
         <label for="invaderSqaure">■</label><br>
-        <input type="radio" id="invaderTriangle" name="invader-shape-triangle" />
+        <input type="radio" id="invaderTriangle" name="invaderShape" value="triangle" />
         <label for="invaderTriangle">▲</label><br>
-        <input type="radio" id="invaderCircle" name="invader-shape-circle" />
+        <input type="radio" id="invaderCircle" name="invaderShape" value="circle" />
         <label for="invaderCircle">⬤</label><br>
+      </fieldset>
+      
+      <label>Player Shape:</label>
+      <fieldset id="playerShape">
+        <input type="radio" id="playerSquare" name="playerShape" value="square" checked />
+        <label for="playerSqaure">■</label><br>
+        <input type="radio" id="playerTriangle" name="playerShape" value="triangle" />
+        <label for="playerTriangle">▲</label><br>
+        <input type="radio" id="playerCircle" name="playerShape" value="circle" />
+        <label for="playerCircle">⬤</label><br>
       </fieldset>
       
       <label>Invader Color: <span id="invaderColor-value"></span></label>
