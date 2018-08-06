@@ -262,6 +262,12 @@ playerShapeFieldsetInput.onchange = function(e) {
       //console.log(currentGame);
       //console.log(gamePaused);
       
+      // Check if gameOver
+      if (self.lives < 1) {
+        gameOver = true;
+      }
+      
+      
       if (!gamePaused) {
         self.scoreCounter.innerHTML = self.score;
         self.livesCounter.innerHTML = self.lives;
@@ -282,7 +288,11 @@ playerShapeFieldsetInput.onchange = function(e) {
           }, gameSpeed);
         } else {
           gameOver = false;
-          currentGame = new Game();
+          screen.font = "30px Courier";
+          screen.fillText("Game Over",64,140);
+          setTimeout(function() {   
+            currentGame = new Game();
+          }, 3000);
         }
       } else {
         setTimeout(function() {
@@ -510,7 +520,7 @@ playerShapeFieldsetInput.onchange = function(e) {
       // Create invader.
       invaders.push(new Invader(game, { x: x, y: y}));
     }
-
+    
     return invaders;
   };
 
