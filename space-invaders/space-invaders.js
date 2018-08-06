@@ -26,11 +26,10 @@ const defaultParams = {
   invaderBulletSpeed: 4,
   mouseControl: false,
   startingLives: 3,
-  playerSquare: true,
-  playerTriangle: false,
-  playerCircle: false,
-  invaderColor: "#EFEFAF",
-  playerColor: "#DFDFDF",
+  playerShape: 'square',
+  invaderShape: 'square',
+  invaderColor: '#EFEFAF',
+  playerColor: '#DFDFDF',
   
   gameURL: 'https://space-invaders-remixable.glitch.me/',
 };
@@ -57,11 +56,16 @@ function getParamsFromHash() {
 }
 
 function updateInputsAndSetListeners(paramId, paramValue, callback) {
-  //var paramValue = params[paramId];
-
+  // fieldset elements for radio buttons don't have value
+  const fieldsetParams = ['playerShape', 'invaderShape'];
+  
   // Set values of all input elements to the default from defaultParams
   var paramInput = document.getElementById(paramId);
-  setInputValue(paramInput, paramValue);
+  if (fieldsetParams.indexOf(paramId) > -1) {
+    console.log("In Array: " + paramId);
+  } else {
+    setInputValue(paramInput, paramValue);
+  }
 
   // Set the <span> in the label of each element to show the value
   var valueElement = document.getElementById(paramId + '-value');
@@ -73,11 +77,19 @@ function updateInputsAndSetListeners(paramId, paramValue, callback) {
   // Set listener for updated params
   paramInput.onchange = function(e) {
     e.preventDefault();
-    var newValue = this.value;
+    var newValue;
+    if (fieldsetParams.indexOf(paramId) > -1) {
+        var selectedOption = document.querySelector('input[name = "' + paramId + '"]:checked');
+        newValue = selectedOption.value;
+    } else {
+      newValue = this.value;
+    }
+    
     if (valueElement) {
       setLabelValue(valueElement, newValue);
     }
     callback(paramId, newValue)
+  
     document.getElementById("hidden-input").focus();
   }
 }
@@ -132,7 +144,10 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
 //var playerCircleInput = document.getElementById('playerCircle');
 
 
-
+var playerShapeFieldsetInput = document.getElementById('playerShape');
+playerShapeFieldsetInput.onchange = function(e) {
+  alert(this.value); 
+}
 
 
 
@@ -174,6 +189,7 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
     screen = canvas.getContext('2d');
     
     
+    // Mouse/Touchscreen controls:
     canvas.addEventListener('mousemove', function(e) {
       e.preventDefault();
       var mousePos = getMousePos(canvas, e);
@@ -193,7 +209,6 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
       printXY(mousePos);
       shootThisFrame = true;
     }, false);
-
 
     canvas.addEventListener('click', function(e) {
       e.preventDefault();
@@ -629,47 +644,65 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
     
     var drawShapeBody;
     
+    function selectBodyType(shape) {
+      
+      function drawRectBody(color, x, y, sizeX, sizeY) {
+        screen.fillStyle = color;
+        screen.fillRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
+      }
+
+      function drawTriBody(color, x, y, sizeX, sizeY) {
+        screen.fillStyle = color;
+        screen.beginPath();
+        screen.moveTo(x, y + sizeY / 2);
+        screen.lineTo(x + sizeX / 2, y - sizeY / 2);
+        screen.lineTo(x - sizeX / 2, y - sizeY / 2);
+        screen.lineTo(x, y + sizeY / 2);
+        screen.fill();
+        //screen.strokeStyle = 'red';
+        //screen.strokeRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
+      }
+
+      function drawInvTriBody(color, x, y, sizeX, sizeY) {
+        drawTriBody(color, x, y, sizeX, -sizeY)
+      }
+
+      function drawCircBody(color, x, y, sizeX, sizeY) {
+        screen.fillStyle = color;
+        screen.beginPath();
+        screen.arc(x, y, sizeX / 2, 0, Math.PI * 2, true);
+        screen.fill();
+      }
+      
+      switch(shape) {
+        case 'square':
+          drawShapeBody = drawRectBody;
+          break;
+        case 'triangle':
+          drawShapeBody = drawInvTriBody;
+          break;
+        case 'circle':
+          drawShapeBody = drawCircBody;
+          break;
+        default:
+          drawShapeBody = drawRectBody;
+      }
+      return drawShapeBody;
+    }
+    
     if (body instanceof Invader) {
-      //drawShapeBody = body.game.params.drawInvaderBody;
-      drawShapeBody = drawRectBody.bind(this, body.game.params.invaderColor);
+      drawShapeBody = selectBodyType(body.game.params.invaderShape).bind(this, body.game.params.invaderColor);
     } else if (body instanceof Player) {
-      //drawShapeBody = body.game.params.drawPlayerBody;
-      drawShapeBody = drawRectBody.bind(this, body.game.params.playerColor);
+      drawShapeBody = selectBodyType(body.game.params.playerShape).bind(this, body.game.params.playerColor);
     } else {
-      drawShapeBody = drawRectBody.bind(this, "#FFF");
+      drawShapeBody = selectBodyType('square').bind(this, "#FFF");
     }
     
     drawShapeBody(body.center.x, body.center.y, body.size.x, body.size.y);  
     
   };
   
-  function drawRectBody(color, x, y, sizeX, sizeY) {
-    screen.fillStyle = color;
-    screen.fillRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
-  }
 
-  function drawTriBody(color, x, y, sizeX, sizeY) {
-    screen.fillStyle = color;
-    screen.beginPath();
-    screen.moveTo(x, y + sizeY / 2);
-    screen.lineTo(x + sizeX / 2, y - sizeY / 2);
-    screen.lineTo(x - sizeX / 2, y - sizeY / 2);
-    screen.lineTo(x, y + sizeY / 2);
-    screen.fill();
-    //screen.strokeStyle = 'red';
-    //screen.strokeRect(x - sizeX / 2, y - sizeY / 2, sizeX, sizeY);
-  }
-
-  function drawInvTriBody(color, x, y, sizeX, sizeY) {
-    drawTriBody(color, x, y, sizeX, -sizeY)
-  }
-
-  function drawCircBody(color, x, y, sizeX, sizeY) {
-    screen.fillStyle = color;
-    screen.beginPath();
-    screen.arc(x, y, sizeX / 2, 0, Math.PI * 2, true);
-    screen.fill();
-  }
 
   // **colliding()** returns true if two passed bodies are colliding.
   // The approach is to test for five situations.  If any are true,
