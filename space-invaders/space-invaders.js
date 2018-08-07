@@ -8,6 +8,7 @@ var cursorX;
 var cursorY;
 
 var gameOver = false;
+var reset = false;
 var levelOver = false;
 
 var canvas;
@@ -288,11 +289,17 @@ playerShapeFieldsetInput.onchange = function(e) {
           }, gameSpeed);
         } else {
           gameOver = false;
-          screen.font = "30px Courier";
-          screen.fillText("Game Over",64,140);
-          setTimeout(function() {   
-            currentGame = new Game();
-          }, 3000);
+          // Save previous game params
+          hashParams = self.params;
+          if (!reset) {
+            screen.font = "30px Courier";
+            screen.fillText("Game Over",64,140);
+            setTimeout(function() {   
+              currentGame = new Game();
+            }, 3000);
+          } else {
+            currentGame = new Game(); 
+          }
         }
       } else {
         setTimeout(function() {
@@ -746,8 +753,8 @@ playerShapeFieldsetInput.onchange = function(e) {
   
   var resetButton = document.getElementById('reset-button');
   resetButton.addEventListener('click', function() {
-    currentGame = null;
     gameOver = true;
+    reset = true;
   });
   
   var pauseButton = document.getElementById('pause-button');
