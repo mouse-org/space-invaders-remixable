@@ -3,7 +3,7 @@
 }
 
 body {
-  font-family: "Gill Sans WGL W01 Light";
+  font-family: "Ariel", Sans-Serif;
   font-size: 18px;
   line-height: 1.26em;
   text-rendering: optimizeLegibility;
@@ -11,11 +11,10 @@ body {
   -webkit-font-feature-settings: "kern";
   -moz-font-feature-settings: "kern";
   -moz-font-feature-settings: "kern=1";
-
-  width: 680px;
   margin-left:auto;
   margin-right:auto;
   padding: 0 10px 0 10px;
+  height: 100%;
   color: #333;
     -webkit-user-select: none; /* webkit (safari, chrome) browsers */
     -moz-user-select: none; /* mozilla browsers */
@@ -67,53 +66,6 @@ p {
   margin:0 0 12px 0;
 }
 
-.strapline {
-  margin-left:auto;
-  margin-right:auto;
-  text-align:center;
-  padding:0;
-  margin:0;
-}
-
-.header {
-  border-bottom: 1px solid black;
-  padding-bottom: 8px;
-}
-
-.footer {
-  margin-left:auto;
-  margin-right:auto;
-  text-align:center;
-  padding-top: 8px;
-  border-top:1px solid black;
-  height: 25px;
-}
-
-.grid {
-  margin-left:auto;
-  margin-right:auto;
-}
-
-.grid-element {
-  height: 300px;
-  width: 300px;
-  margin: 10px;
-}
-
-.grid-element.project {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-a:hover .grid-element.main {
-  border: 1px black solid;
-  margin: 19px; /* to compensote for push down of border */
-}
-
-.grid-element.main {
-  float: left;
-}
-
 .project-links {
   text-align: center;
 }
@@ -155,6 +107,21 @@ footer > a {
   margin: 25px;
 }
 
+label {
+  margin: 1em 5% 0;
+}
+
+input, fieldset {
+  width: 90%;
+  margin: .25em 5% 2em;
+}
+
+fieldset input {
+  margin: .25em 5%;
+}
+
+
+
 
 #hidden-input {
   position: fixed;
@@ -173,4 +140,44 @@ footer > a {
 fieldset input {
   width: auto;
   display: inline-block;
+}
+
+#space-invaders {
+  background-color: #111;
+}
+
+#game {
+  display: inline-block;
+  max-width: 400px;
+  margin: 0 20px;
+  vertical-align: top;
+  height: 100%;
+  position: fixed;
+}
+
+#scrollable {
+  display: inline-block;
+  overflow: scroll;
+  height: 100%;
+  width: 60%;
+  position: fixed;
+  left: 420px;
+}
+
+@media (max-width: 870px) {
+  input {
+    max-width: 800px;
+    margin: 0 10%;
+    width: 80%;
+  }
+  
+  #game {
+    height: 400px;
+  }
+  #scrollable {
+    top: 400px;
+    left: 20px;
+    width: 100%;
+    max-height: Calc(100% - 400px);
+  }
 }
