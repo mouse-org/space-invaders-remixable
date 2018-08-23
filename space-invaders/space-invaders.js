@@ -147,6 +147,18 @@ var hashParams = getParamsFromHash()
 // Store mouse control outside of Game so it doesn't copy to url:
 var mouseControlCheckbox = document.getElementById('mouseControl');
 
+function randomIntFromInterval(min,max) {
+  return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
 
 
@@ -309,17 +321,6 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
     // the tick() function itself.
     tick();
     
-    var defaultsButton = document.getElementById('reset-defaults');
-    defaultsButton.onclick = () => {
-      this.params.resetParams = true;
-      document.getElementById("hidden-input").focus();
-    }
-    var randomizeButton = document.getElementById('randomize');
-    randomizeButton.onclick = function() {
-      this.params.randomParams = true;
-      document.getElementById("hidden-input").focus();
-    }
-    
     
   };
 
@@ -329,50 +330,78 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
     updateParams: function() {
       
       // Check for reset or random
-      if (this.params.resetParams) {
-        for (var i in this.params) {
-          
-          /*
-          Not Working:
-          Colors
-          
-          */
-          
-          if (defaultParams[i]) {
-            
-            var valueElement = document.getElementById(i + '-value');
-            var inputElement = document.getElementById(i);
-            
-            if (i != 'mouseControl' && i != 'gameURL') {
-              
-              if (valueElement) {
-                setLabelValue(valueElement, defaultParams[i]);
-              }
-              
-              if (inputElement) {
-                if (i === 'startingLives') {
-                  inputElement.value = defaultParams[i];
-                } else if (i === 'playerShape' || i === 'invaderShape') {
-                  var nodes = inputElement.childNodes;
-                  for (var j in nodes) {
-                    nodes[j].checked = false;
-                    if (nodes[j].id === defaultParams[i]) {
-                       nodes[j].checked = true;
-                    }
-                  }
-                } else {
-                  setInputValue(inputElement, defaultParams[i]);
+      
+      function setParamsFrom(id, value) {
+
+        var valueElement = document.getElementById(id + '-value');
+        var inputElement = document.getElementById(id);
+
+        if (id != 'mouseControl' && id != 'gameURL') {
+
+          if (valueElement) {
+            setLabelValue(valueElement, value);
+          }
+
+          if (inputElement) {
+            if (id === 'startingLives') {
+              inputElement.value = value;
+            } else if (id === 'playerShape' || id === 'invaderShape') {
+              var nodes = inputElement.childNodes;
+              for (var j in nodes) {
+                nodes[j].checked = false;
+                if (nodes[j].id === value) {
+                   nodes[j].checked = true;
                 }
               }
-              this.params[i] = defaultParams[i]; 
+            } else {
+              setInputValue(inputElement, value);
             }
           }
+          this.params[id] = value; 
+        }
+      };
+      
+      // Press Reset Params Button
+      if (this.params.resetParams) {
+        for (var i in this.params) {
+          if (defaultParams[i]) {
+            var setParamsFrom = setParamsFrom.bind(this);
+            setParamsFrom(i, defaultParams[i]); 
+          } 
         }
         setGameUrlAndHashFrom(this.params);
         this.params.resetParams = false;
       }
+      
+      // Press Random Params Button
       if (this.params.randomParams) {
-        alert("RANDOM");
+        for (var i in this.params) {
+          
+          var el = document.getElementById(i);
+          if (el) {
+            var setParamsFrom = setParamsFrom.bind(this);
+            var newValue;
+            if (el.max && el.min) {
+              newValue = randomIntFromInterval(el.min, el.max);
+
+              if (defaultParams[i]) {
+                setParamsFrom(i, newValue); 
+              }
+
+            } else {
+              if (i.indexOf('Shape') > -1) {
+                var shapes = ['Square', 'Triangle', 'Circle']
+                var randomShape = shapes[randomIntFromInterval(0, shapes.length)];
+                newValue = i.substring(0, i.indexOf('Shape')) + randomShape;
+                setParamsFrom(i, newValue);
+              } else if (i.indexOf('Color') > -1) {
+                newValue = getRandomColor();
+                setParamsFrom(i, newValue);
+              }
+            }
+          }
+          
+        }
         this.params.randomParams = false;
       }
       
@@ -832,6 +861,17 @@ var mouseControlCheckbox = document.getElementById('mouseControl');
       pauseButton.innerHTML = 'Start';
     }
   });
+  
+  var defaultsButton = document.getElementById('reset-defaults');
+  defaultsButton.onclick = () => {
+    currentGame.params.resetParams = true;
+    document.getElementById("hidden-input").focus();
+  }
+  var randomizeButton = document.getElementById('randomize');
+  randomizeButton.onclick = function() {
+    currentGame.params.randomParams = true;
+    document.getElementById("hidden-input").focus();
+  }
 
 
 })();
