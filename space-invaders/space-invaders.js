@@ -665,7 +665,7 @@ function getRandomColor() {
       }
 
       // If S key is down...
-      if (this.keyboarder.isDown(this.keyboarder.KEYS.S) || shootThisFrame) {
+      if (this.keyboarder.isDown(this.keyboarder.KEYS.S) || this.keyboarder.isDown(this.keyboarder.KEYS.Space) || shootThisFrame) {
         // ... create a bullet just above the player that will move upwards...
         var bulletSize = {
           x: this.game.params.playerBulletSize,
@@ -740,7 +740,7 @@ function getRandomColor() {
     };
 
     // Handy constants that give keyCodes human-readable names.
-    this.KEYS = { LEFT: 37, RIGHT: 39, S: 83 };
+    this.KEYS = { LEFT: 37, RIGHT: 39, S: 83, Space: 32 };
   };
 
   // Other functions
