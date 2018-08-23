@@ -54,8 +54,47 @@ h2 {
   padding: 0;
 }
 
+button {
+  font-size: 125%;
+  margin: .25em 0;
+  border-radius: 5px;
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #eee;
+}
+
+#toggle {
+  text-align: center;
+  margin: 1em 1em 3em;
+}
+
+#toggle button {
+  font-size: 150%;
+  border: 2px solid #222;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #DDF;
+  padding: 5px;
+}
+
+#toggle button:hover {
+  background-color: #EEF; 
+}
+
+#parameters {
+  display: none;
+}
+
 .header a {
   text-decoration:none;
+  margin: .5em;
+}
+
+#directions {
+  margin: 1em 0 2em;
 }
 
 h2 a {
@@ -108,16 +147,23 @@ footer > a {
 }
 
 label {
-  margin: 1em 5% 0;
+  margin: 1em 0 0;
+  display: block;
 }
 
-input, fieldset {
+input {
   width: 90%;
-  margin: .25em 5% 2em;
+  margin: .25em 0 2em;
+  display: block;
 }
 
-fieldset input {
-  margin: .25em 5%;
+fieldset {
+  width: 90%;
+}
+
+fieldset input, fieldset label {
+  margin: 0;
+  display: inline;
 }
 
 
@@ -131,7 +177,7 @@ fieldset input {
   width: 0;
 }
 
-.header h2 {
+#game-info h2 {
   display: inline-block;
   margin: 10px 20px 0 0;
   font-size: 20px;
@@ -162,6 +208,16 @@ fieldset input {
   width: 60%;
   position: fixed;
   left: 420px;
+}
+
+.param-category {
+  border: 2px solid #333;
+  margin: 1em 0;
+  padding: 1em;
+}
+
+.param-category h3 {
+  margin: 0 0 .5em;
 }
 
 @media (max-width: 870px) {
