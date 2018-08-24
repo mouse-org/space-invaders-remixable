@@ -151,6 +151,17 @@ function randomIntFromInterval(min,max) {
   return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+function weightedRandom(min, max, weight, extraRandomness) {
+  if (max - min < extraRandomness) {
+    extraRandomness = max - min; 
+  }
+  var roundedSqrtMin = Math.floor(Math.pow(min, (1 / weight)));
+  var roundedSqrtMax = Math.floor(Math.pow(max - extraRandomness, (1 / weight)));
+  var weightedRandom = Math.pow(randomIntFromInterval(roundedSqrtMin, roundedSqrtMax), weight)
+  var randomValue = weightedRandom + randomIntFromInterval(0, extraRandomness); 
+  return randomValue
+}
+
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
@@ -382,7 +393,13 @@ function getRandomColor() {
             var setParamsFrom = setParamsFrom.bind(this);
             var newValue;
             if (el.max && el.min) {
-              newValue = randomIntFromInterval(el.min, el.max);
+              
+              // Weighted random for invaderShootingFrequency
+              if (i === 'invaderShootingFrequency') {
+                newValue = weightedRandom(el.min, el.max, 4, 100);
+              } else {
+                newValue = randomIntFromInterval(el.min, el.max);
+              }
 
               if (defaultParams[i]) {
                 setParamsFrom(i, newValue); 
