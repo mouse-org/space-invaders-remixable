@@ -13,10 +13,12 @@
 
     <!--<script type="text/javascript" src="http://fast.fonts.net/jsapi/3ac768d8-7a5c-4fd8-b377-f61d7f1760fa.js"></script>-->
 
-    <title>Space Invaders Remixed!</title>
+    <title>Remixable Space Invaders!</title>
     <!--<script src="remix-params.js" defer></script>-->
+    <script src="pickr-widget/pickr.min.js"></script>
     <script src="space-invaders.js" defer></script>
 
+    <link type="text/css" rel="stylesheet" href="/pickr-widget/pickr.min.css" />
     <link type="text/css" rel="stylesheet" href="/main.css" />
   </head>
   <body>
@@ -43,7 +45,7 @@
     <div id="scrollable">
       <div class="header">
         <a href="/">
-          <h1>Space Invaders Remixed!</h1>
+          <h1>Remixable Space Invaders!</h1>
         </a>
       </div>
 
@@ -53,11 +55,11 @@
       <div>
         
         <p id="about">
-          <strong>What is Space Invaders Remixed?</strong><br>This is a remixable simplified version of the classic arcade game <a href="https://en.wikipedia.org/wiki/Space_Invaders" target="blank">Space Invaders</a>. Defend your planet against the group of invaders who have appeared in the sky!
+          <strong>What is Remixable Space Invaders?</strong><br>This is a remixable simplified version of the classic arcade game <a href="https://en.wikipedia.org/wiki/Space_Invaders" target="blank">Space Invaders</a>. Defend your planet against the group of invaders who have appeared in the sky!
         </p>
         
         <p id="directions">
-          <strong>Directions:</strong><br>Move with the arrow keys or a mouse/touch (turn on mouse controls below).  Shoot with the S key, spacebar or with click/tap.  The game on the left (or at the top on mobile) updates live as you change the sliders below.
+          <strong>Directions:</strong><br>Move with the arrow keys or a mouse/touch (turn on mouse controls below).  Shoot with the S key, spacebar or with click/tap.  The game on the left (or at the top on mobile) updates live as you change the sliders below. Click the 'Activate Controls!' button to get started.
         </p>
       </div>
       
@@ -67,7 +69,7 @@
         </h3>
         
         <button id="toggle-button">
-          💫 Remix! 💫
+          💫 Activate Controls! 💫
         </button>
       </div>
       
@@ -77,34 +79,8 @@
         <h2>
           Change Parameters to Remix the Game:
         </h2>
-        
-        <button id="reset-defaults">
-          Reset to Defaults
-        </button>
-        <button id="randomize">
-          Randomize All
-        </button>
 
         <input type="checkbox" id="hidden-input" name="hidden-input">
-
-        <div id="player-params" class="param-category">
-          <h3>
-            Player Parameters:
-          </h3>
-          <label>Player Shooting Delay: <span id="shootingDelay-value"></span></label>
-          <input type="range" id="shootingDelay" name="shooting-delay" 
-             min="0" max="1000" value="0" step="50" />
-
-          <label>Player Speed: <span id="playerSpeed-value"></span></label>
-          <input type="range" id="playerSpeed" name="player-speed" 
-             min="0" max="300" value="60" step="10" />
-
-          <label>Player Blaster Size: <span id="playerBulletSize-value"></span></label>
-          <input type="range" id="playerBulletSize" name="player-bullet-size" 
-             min="0" max="15" value="3" step="1" />
-          
-          <label>Lives:</label><input type="number" id="startingLives">
-        </div>
 
         <div id="invader-params" class="param-category">
           <h3>
@@ -114,18 +90,14 @@
           <label>Invader Size: <span id="invaderSize-value"></span></label>
           <input type="range" id="invaderSize" name="invade-size" 
              min="0" max="30" value="15" step="1" />
+          
+          <label>Invader Shooting Frequency: <span id="invaderShootingFrequency-value"></span></label>
+          <input type="range" id="invaderShootingFrequency" name="invader-shooting-frequency" 
+             min="0" max="1000" value="10" step="5" />
 
           <label>Invader Speed: <span id="invaderSpeed-value"></span></label>
           <input type="range" id="invaderSpeed" name="invader-speed" 
              min="0" max="60" value="10" step="3" />
-
-          <label>Invader Patrol Distance: <span id="invaderPatrolDistance-value"></span></label>
-          <input type="range" id="invaderPatrolDistance" name="invader-patrol-distance" 
-             min="0" max="270" value="30" step="10" />
-
-          <label>Invader Shooting Frequency: <span id="invaderShootingFrequency-value"></span></label>
-          <input type="range" id="invaderShootingFrequency" name="invader-shooting-frequency" 
-             min="0" max="1000" value="10" step="5" />
 
           <label>Invader Blaster Size: <span id="invaderBulletSize-value"></span></label>
           <input type="range" id="invaderBulletSize" name="invader-bullet-size" 
@@ -138,6 +110,30 @@
           <label>Invader Blaster Direction Randomness: <span id="invaderBulletDirectionRandomness-value"></span></label>
           <input type="range" id="invaderBulletDirectionRandomness" name="invader-bullet-direction-randomness" 
              min="0" max="30" value="5" step="1" />
+          
+          <label>Invader Patrol Distance: <span id="invaderPatrolDistance-value"></span></label>
+          <input type="range" id="invaderPatrolDistance" name="invader-patrol-distance" 
+             min="0" max="270" value="30" step="10" />
+        </div>
+        
+        <div id="player-params" class="param-category">
+          <h3>
+            Player Parameters:
+          </h3>
+
+          <label>Player Speed: <span id="playerSpeed-value"></span></label>
+          <input type="range" id="playerSpeed" name="player-speed" 
+             min="0" max="300" value="60" step="10" />
+
+          <label>Player Blaster Size: <span id="playerBulletSize-value"></span></label>
+          <input type="range" id="playerBulletSize" name="player-bullet-size" 
+             min="0" max="15" value="3" step="1" />
+          
+          <label>Player Shooting Delay: <span id="shootingDelay-value"></span></label>
+          <input type="range" id="shootingDelay" name="shooting-delay" 
+             min="0" max="1000" value="0" step="50" />
+          
+          <label>Lives:</label><input type="number" id="startingLives">
         </div>
 
         
@@ -146,19 +142,6 @@
           <h3>
             Customize:
           </h3>
-
-          <label>Player Shape:</label>
-          <fieldset id="playerShape">
-            <input type="radio" id="playerSquare" name="playerShape" value="playerSquare" checked />
-            <label for="playerSqaure" style="font-size: 200%;">■</label><br>
-            <input type="radio" id="playerTriangle" name="playerShape" value="playerTriangle" />
-            <label for="playerTriangle">▲</label><br>
-            <input type="radio" id="playerCircle" name="playerShape" value="playerCircle" />
-            <label for="playerCircle">⬤</label><br>
-          </fieldset>
-
-          <label>Player Color: <span id="playerColor-value"></span></label>
-          <input type="color" id="playerColor" name="player-color" value="#DFDFDF">
 
           <label>Invader Shape:</label>
           <fieldset id="invaderShape">
@@ -173,8 +156,32 @@
           <label>Invader Color: <span id="invaderColor-value"></span></label>
           <input type="color" id="invaderColor" name="invader-color" value="#EFEFAF">
           
+          
+          <label>Player Shape:</label>
+          <fieldset id="playerShape">
+            <input type="radio" id="playerSquare" name="playerShape" value="playerSquare" checked />
+            <label for="playerSqaure" style="font-size: 200%;">■</label><br>
+            <input type="radio" id="playerTriangle" name="playerShape" value="playerTriangle" />
+            <label for="playerTriangle">▲</label><br>
+            <input type="radio" id="playerCircle" name="playerShape" value="playerCircle" />
+            <label for="playerCircle">⬤</label><br>
+          </fieldset>
+
+          <label>Player Color: <span id="playerColor-value"></span></label>
+          <input type="color" id="playerColor" name="player-color" value="#DFDFDF">
+          
           <label>Background Color: <span id="backgroundColor-value"></span></label>
           <input type="color" id="backgroundColor" name="background-color" value="#000000">
+        </div>
+        
+        <div id="reset-buttons">
+          <button id="reset-defaults">
+            Reset to Defaults
+          </button>
+          <button id="randomize">
+            Randomize All
+          </button>
+          
         </div>
 
         
