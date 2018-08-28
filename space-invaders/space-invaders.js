@@ -60,8 +60,6 @@ function getParamsFromHash() {
     }
   }
   
-  console.log("Params from Hash:\n " + JSON.stringify(hashParams));
-  
   return hashParams;
 }
 
@@ -72,7 +70,6 @@ function updateInputsAndSetListeners(paramId, paramValue, callback) {
   // Set values of all input elements to the default from defaultParams
   var paramInput = document.getElementById(paramId);
   if (fieldsetParams.indexOf(paramId) > -1) {
-    console.log("In Array: " + paramId);
   } else {
     if (paramInput) {
       setInputValue(paramInput, paramValue);
@@ -182,8 +179,6 @@ function getRandomColor() {
   var Game = function() {
     
     this.params = Object.assign({}, defaultParams, hashParams);
-    console.log("THIS.PARAMS");
-    console.log(this.params);
     
     // Set listeners for each param in defaultParams
     for (var i in this.params) {
@@ -279,8 +274,6 @@ function getRandomColor() {
 
     // Main game tick function.  Loops forever, running 60ish times a second.
     var tick = function() {
-      
-      //console.log(JSON.stringify(self.params));
             
       // Check if gameOver
       if (self.lives < 1) {
@@ -435,8 +428,6 @@ function getRandomColor() {
       
       // Update Mouse Control
       this.params.mouseControl = mouseControlCheckbox.checked
-      ///this.params = setGameURL(this.params);
-      //console.log(JSON.stringify(params));
     },
     
 
@@ -534,8 +525,7 @@ function getRandomColor() {
   var Invader = function(game, center) {
     this.game = game;
     this.center = center;
-    
-    //console.log(JSON.stringify(game));
+
     this.size = { x: game.params.invaderSize, y: game.params.invaderSize };
 
     // Invaders patrol from left to right and back again.

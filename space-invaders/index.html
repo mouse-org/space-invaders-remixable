@@ -11,14 +11,8 @@
       MTIConfig.EnableCustomFOUTHandler = true // true = prevent FOUT
     </script>
 
-    <!--<script type="text/javascript" src="http://fast.fonts.net/jsapi/3ac768d8-7a5c-4fd8-b377-f61d7f1760fa.js"></script>-->
-
     <title>Remixable Space Invaders!</title>
-    <!--<script src="remix-params.js" defer></script>-->
-    <script src="pickr-widget/pickr.min.js"></script>
     <script src="space-invaders.js" defer></script>
-
-    <link type="text/css" rel="stylesheet" href="/pickr-widget/pickr.min.css" />
     <link type="text/css" rel="stylesheet" href="/main.css" />
   </head>
   <body>
@@ -44,9 +38,8 @@
 
     <div id="scrollable">
       <div class="header">
-        <a href="/">
-          <h1>Remixable Space Invaders!</h1>
-        </a>
+        <img id="mouse-logo" src="https://cdn.glitch.com/94ac0a61-11e1-4dc4-b5a9-c42bc2d9fa47%2Fmouse_logo_gear_rgb.png?1535462970175" alt="Mouse Logo" />
+        <h1 class="header"><a class="header" href="/">Remixable Space Invaders!</a></h1>
       </div>
 
       <audio id="shoot-sound" src="https://cdn.hyperdev.com/57237357-0897-4eed-a5ec-b35c4432502c/shoot.mp3"></audio>
@@ -76,7 +69,7 @@
 
       <div id="parameters">
 
-        <h2>
+        <h2 class="header">
           Change Parameters to Remix the Game:
         </h2>
 
@@ -195,13 +188,13 @@
         <input type="text" id="gameURL" name="game-url" value="https://remixable-space-invaders.glitch.me/" />
       </div>
 
-
+      <hr>
+      
       <div class="footer">
-        Adapted from <a href="https://github.com/maryrosecook/annotated-code" target="blank">Space Invaders</a> by <a href="http://maryrosecook.com" target="blank">Mary Rose Cook</a>
+        
+        <img src="https://cdn.glitch.com/94ac0a61-11e1-4dc4-b5a9-c42bc2d9fa47%2FMouseSecondary-Twitter_400x400.png?1535464374851" id="gearbo"><p id="mouse-text">This project is part of the <!--<a href="https://create.mouse.org/" target="blank">-->Mouse Create<!--</a>--> <a href="https://mouse.org/seriousgames" target="blank">Serious Games</a> course. <a href="https://mouse.org">Mouse</a> is a national youth development nonprofit that believes in technology as a force for good.</p>
+         <p id="adapted-text">Adapted from <a href="https://github.com/maryrosecook/annotated-code" target="blank">Space Invaders</a> by <a href="http://maryrosecook.com" target="blank">Mary Rose Cook</a></p>
       </div>
-
-      <footer id="gWidget"></footer>
-      <!--<script src="https://widget.glitch.me/widget.min.js"></script>  -->
     
     </div>
   </body>
