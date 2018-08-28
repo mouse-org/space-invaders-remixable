@@ -33,7 +33,7 @@ const defaultParams = {
   playerColor: '#DFDFDF',
   backgroundColor: '#000000',
   
-  gameURL: 'https://space-invaders-remixable.glitch.me/',
+  gameURL: 'https://remixable-space-invaders.glitch.me/',
 };
 
 var toggle = document.getElementById('toggle');
