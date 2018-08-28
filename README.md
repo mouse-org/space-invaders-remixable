@@ -1,7 +1,12 @@
-## Space Invaders
+## Remixable Space Invaders
 
-Demonstrates an animation loop, collision detection, keyboard input, drawing to the canvas and playing sounds.
+#### What is Remixable Space Invaders?
 
-With short, heavily annotated JavaScript source code, so you can understand how it all works.
+This is a remixable simplified version of the classic arcade game [Space Invaders](https://en.wikipedia.org/wiki/Space_Invaders). Defend your planet against the group of invaders who have appeared in the sky!
 
-![A screenshot of Space Invaders](https://cdn.glitch.com/57237357-0897-4eed-a5ec-b35c4432502c/screenshot.gif)
+
+#### Directions:
+
+Move with the arrow keys or a mouse/touch (turn on mouse controls below).  Shoot with the S key, spacebar or with click/tap.  The game on the left (or at the top on mobile) updates live as you change the sliders below. Click the 'Activate Controls!' button to get started.
+
+Adapted from [Space Invaders](https://github.com/maryrosecook/annotated-code) by [Mary Rose Cook](http://maryrosecook.com)
