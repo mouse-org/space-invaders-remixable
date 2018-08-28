@@ -98,6 +98,7 @@ function updateInputsAndSetListeners(paramId, paramValue, callback) {
       if (valueElement) {
         setLabelValue(valueElement, newValue);
       }
+      
       callback(paramId, newValue)
 
       document.getElementById("hidden-input").focus();
@@ -294,7 +295,6 @@ function getRandomColor() {
         self.draw(screen, gameSize);
 
         // Queue up the next call to tick with the browser.
-        //requestAnimationFrame(tick);
         if (!gameOver) {
           setTimeout(function() {
             requestAnimationFrame(tick);
@@ -319,7 +319,7 @@ function getRandomColor() {
         }, gameSpeed);
       }
       
-    }//.bind(this);
+    }
 
     // Run the first game tick.  All future calls will be scheduled by
     // the tick() function itself.
@@ -533,7 +533,7 @@ function getRandomColor() {
     // invader in their patrol.  It starts at 0, increases to 40, then
     // decreases to 0, and so forth.
     this.patrolX = 0;
-    //this.patrolMax = this.game.params.invaderPatrolDistance;
+    this.game.patrolReset = false;
 
     // The x speed of the invader.  A positive value moves the invader
     // right. A negative value moves it left.
@@ -548,11 +548,19 @@ function getRandomColor() {
       this.speedX = this.speedX > 0 ? setSpeed : -setSpeed;
       this.patrolMax = this.game.params.invaderPatrolDistance;
       // If the invader is outside the bounds of their patrol...
-      if (this.patrolX < (-this.patrolMax + 30) || this.patrolX > this.patrolMax) {
-
+      
+      if ((this.patrolX < (-this.patrolMax + 30) || this.patrolX > this.patrolMax) && !this.patrolReset) {
+        
         // ... reverse direction of movement.
         this.speedX = -this.speedX;
+        this.patrolReset = true;
       }
+      
+      // 13 and 17 are half the width of the invader (30) + or - 2 in case the speed is high.
+      if (this.patrolX >= 13 && this.patrolX <= 17) {
+        this.patrolReset = false;
+      }
+      
 
       // If coin flip comes up and no friends below in this
       // invader's column...
@@ -586,7 +594,10 @@ function getRandomColor() {
       this.center.x += this.speedX;
 
       // Update variable that keeps track of current position in patrol.
+      //console.log(this.game.patrolReset);
+      //console.log(this.patrolX + " - " + this.speedX);
       this.patrolX += this.speedX;
+      //console.log(this.patrolX + "\n\n");
     }
   };
 
