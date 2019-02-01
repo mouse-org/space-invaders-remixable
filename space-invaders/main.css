@@ -6,20 +6,11 @@ body {
   font-family: "Ariel", Sans-Serif;
   font-size: 18px;
   line-height: 1.26em;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: "kern";
-  -webkit-font-feature-settings: "kern";
-  -moz-font-feature-settings: "kern";
-  -moz-font-feature-settings: "kern=1";
-  margin-left:auto;
-  margin-right:auto;
+  margin: 1em auto;
   padding: 0 10px 0 10px;
   height: 100%;
   color: #333;
-    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-    -moz-user-select: none; /* mozilla browsers */
-    -khtml-user-select: none; /* webkit (konqueror) browsers */
-    -ms-user-select: none; /* IE10+ */
+  background-color: #BAC6DD;
 }
 
 a {
@@ -38,9 +29,10 @@ h1 {
   margin-right:auto;
   text-align:center;
   margin-top:15px;
-  margin-bottom:0;
+  margin-bottom:1em;
   padding-bottom: 0;
   padding: 0;
+
 }
 
 h2 {
@@ -54,8 +46,51 @@ h2 {
   padding: 0;
 }
 
+.header {
+  color: #2C328C;
+  font-weight: bold;
+}
+
+button {
+  font-size: 125%;
+  margin: .25em 0;
+  background-color: #00A886;
+  cursor: pointer;
+  border: 0px solid black;
+  color: #fff;
+}
+
+button:hover {
+  background-color: #028E6D;
+}
+
+#mouse-logo {
+  width: 40%;
+  margin: 0 30%;
+}
+
+#toggle {
+  text-align: center;
+  margin: 1em 1em 3em;
+}
+
+#toggle button {
+  font-size: 150%;
+  cursor: pointer;
+  padding: 5px;
+}
+
+#parameters {
+  display: none;
+}
+
 .header a {
   text-decoration:none;
+  margin: .5em;
+}
+
+#directions {
+  margin: 1em 0 2em;
 }
 
 h2 a {
@@ -70,14 +105,23 @@ p {
   text-align: center;
 }
 
-footer {
-  margin-top: 50px;
-  padding-top: 25px;
-  border-top: 1px solid lightgrey;
+#footer {
 }
 
-footer > a {
-  color: #BBBBBB;
+#gearbo {
+  width: 50px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+#mouse-text {
+  display: inline-block;
+  width: Calc(100% - 60px);
+  margin-left: 10px;
+}
+
+#adapted-text {
+  margin-left: 60px;
 }
 
 
@@ -108,16 +152,23 @@ footer > a {
 }
 
 label {
-  margin: 1em 5% 0;
+  margin: 1em 0 0;
+  display: block;
 }
 
-input, fieldset {
+input {
   width: 90%;
-  margin: .25em 5% 2em;
+  margin: .25em 0 2em;
+  display: block;
 }
 
-fieldset input {
-  margin: .25em 5%;
+fieldset {
+  width: 90%;
+}
+
+fieldset input, fieldset label {
+  margin: 0;
+  display: inline;
 }
 
 
@@ -131,7 +182,7 @@ fieldset input {
   width: 0;
 }
 
-.header h2 {
+#game-info h2 {
   display: inline-block;
   margin: 10px 20px 0 0;
   font-size: 20px;
@@ -158,10 +209,24 @@ fieldset input {
 #scrollable {
   display: inline-block;
   overflow: scroll;
-  height: 100%;
+  height: 96%;
   width: 60%;
   position: fixed;
   left: 420px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  border: 0px solid #CCC;
+}
+
+.param-category {
+  border: 2px solid #333;
+  margin: 1em 0;
+  padding: 1em;
+}
+
+.param-category h3 {
+  margin: 0 0 .5em;
 }
 
 @media (max-width: 870px) {
@@ -178,6 +243,7 @@ fieldset input {
     top: 400px;
     left: 20px;
     width: 100%;
+    width: Calc(100% - 40px);
     max-height: Calc(100% - 400px);
   }
 }

@@ -27,13 +27,22 @@ const defaultParams = {
   invaderBulletSpeed: 2,
   mouseControl: false,
   startingLives: 3,
-  playerShape: 'square',
-  invaderShape: 'square',
+  playerShape: 'playerSquare',
+  invaderShape: 'invaderSquare',
   invaderColor: '#EFEFAF',
   playerColor: '#DFDFDF',
+  backgroundColor: '#000000',
   
-  gameURL: 'https://space-invaders-remixable.glitch.me/',
+  gameURL: 'https://remixable-space-invaders.glitch.me/',
 };
+
+var toggle = document.getElementById('toggle');
+var parameters = document.getElementById('parameters');
+var toggleButton = document.getElementById('toggle-button');
+toggleButton.onclick = function() {
+  toggle.style.display = "none";
+  parameters.style.display = "block";
+}
 
 
 function getParamsFromHash() {
@@ -51,8 +60,6 @@ function getParamsFromHash() {
     }
   }
   
-  console.log("Params from Hash:\n " + JSON.stringify(hashParams));
-  
   return hashParams;
 }
 
@@ -63,9 +70,10 @@ function updateInputsAndSetListeners(paramId, paramValue, callback) {
   // Set values of all input elements to the default from defaultParams
   var paramInput = document.getElementById(paramId);
   if (fieldsetParams.indexOf(paramId) > -1) {
-    console.log("In Array: " + paramId);
   } else {
-    setInputValue(paramInput, paramValue);
+    if (paramInput) {
+      setInputValue(paramInput, paramValue);
+    }
   }
 
   // Set the <span> in the label of each element to show the value
@@ -76,28 +84,28 @@ function updateInputsAndSetListeners(paramId, paramValue, callback) {
   }
 
   // Set listener for updated params
-  paramInput.onchange = function(e) {
-    e.preventDefault();
-    var newValue;
-    if (fieldsetParams.indexOf(paramId) > -1) {
-        var selectedOption = document.querySelector('input[name = "' + paramId + '"]:checked');
-        newValue = selectedOption.value;
-    } else {
-      newValue = this.value;
+  if (paramInput) {
+    paramInput.onchange = function(e) {
+      e.preventDefault();
+      var newValue;
+      if (fieldsetParams.indexOf(paramId) > -1) {
+          var selectedOption = document.querySelector('input[name = "' + paramId + '"]:checked');
+          newValue = selectedOption.value;
+      } else {
+        newValue = this.value;
+      }
+
+      if (valueElement) {
+        setLabelValue(valueElement, newValue);
+      }
+      
+      callback(paramId, newValue)
+
+      document.getElementById("hidden-input").focus();
     }
-    
-    if (valueElement) {
-      setLabelValue(valueElement, newValue);
-    }
-    callback(paramId, newValue)
-  
-    document.getElementById("hidden-input").focus();
   }
 }
 
-function getInputValue(element) {
-  
-}
 
 function setInputValue(element, value) {
   element.value = value;
@@ -137,19 +145,29 @@ var hashParams = getParamsFromHash()
 // Store mouse control outside of Game so it doesn't copy to url:
 var mouseControlCheckbox = document.getElementById('mouseControl');
 
-
-
-
-//var playerSquareInput = document.getElementById('playerSquare');
-//var playerTriangleInput = document.getElementById('playerTriangle');
-//var playerCircleInput = document.getElementById('playerCircle');
-
-
-var playerShapeFieldsetInput = document.getElementById('playerShape');
-playerShapeFieldsetInput.onchange = function(e) {
-  alert(this.value); 
+function randomIntFromInterval(min,max) {
+  return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+function weightedRandom(min, max, weight, extraRandomness) {
+  if (max - min < extraRandomness) {
+    extraRandomness = max - min; 
+  }
+  var roundedSqrtMin = Math.floor(Math.pow(min, (1 / weight)));
+  var roundedSqrtMax = Math.floor(Math.pow(max - extraRandomness, (1 / weight)));
+  var weightedRandom = Math.pow(randomIntFromInterval(roundedSqrtMin, roundedSqrtMax), weight)
+  var randomValue = weightedRandom + randomIntFromInterval(0, extraRandomness); 
+  return randomValue
+}
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
 
 
@@ -162,8 +180,6 @@ playerShapeFieldsetInput.onchange = function(e) {
   var Game = function() {
     
     this.params = Object.assign({}, defaultParams, hashParams);
-    console.log("THIS.PARAMS");
-    console.log(this.params);
     
     // Set listeners for each param in defaultParams
     for (var i in this.params) {
@@ -259,10 +275,7 @@ playerShapeFieldsetInput.onchange = function(e) {
 
     // Main game tick function.  Loops forever, running 60ish times a second.
     var tick = function() {
-      //console.log("TICK!");
-      //console.log(currentGame);
-      //console.log(gamePaused);
-      
+            
       // Check if gameOver
       if (self.lives < 1) {
         gameOver = true;
@@ -282,7 +295,6 @@ playerShapeFieldsetInput.onchange = function(e) {
         self.draw(screen, gameSize);
 
         // Queue up the next call to tick with the browser.
-        //requestAnimationFrame(tick);
         if (!gameOver) {
           setTimeout(function() {
             requestAnimationFrame(tick);
@@ -307,17 +319,102 @@ playerShapeFieldsetInput.onchange = function(e) {
         }, gameSpeed);
       }
       
-    }//.bind(this);
+    }
 
     // Run the first game tick.  All future calls will be scheduled by
     // the tick() function itself.
     tick();
+    
+    
   };
 
   Game.prototype = {
     
     
     updateParams: function() {
+      
+      // Check for reset or random
+      
+      function setParamsFrom(id, value) {
+
+        var valueElement = document.getElementById(id + '-value');
+        var inputElement = document.getElementById(id);
+
+        if (id != 'mouseControl' && id != 'gameURL') {
+
+          if (valueElement) {
+            setLabelValue(valueElement, value);
+          }
+
+          if (inputElement) {
+            if (id === 'startingLives') {
+              inputElement.value = value;
+            } else if (id === 'playerShape' || id === 'invaderShape') {
+              var nodes = inputElement.childNodes;
+              for (var j in nodes) {
+                nodes[j].checked = false;
+                if (nodes[j].id === value) {
+                   nodes[j].checked = true;
+                }
+              }
+            } else {
+              setInputValue(inputElement, value);
+            }
+          }
+          this.params[id] = value; 
+        }
+      };
+      
+      // Press Reset Params Button
+      if (this.params.resetParams) {
+        for (var i in this.params) {
+          if (defaultParams[i]) {
+            var setParamsFrom = setParamsFrom.bind(this);
+            setParamsFrom(i, defaultParams[i]); 
+          } 
+        }
+        setGameUrlAndHashFrom(this.params);
+        this.params.resetParams = false;
+      }
+      
+      // Press Random Params Button
+      if (this.params.randomParams) {
+        for (var i in this.params) {
+          
+          var el = document.getElementById(i);
+          if (el) {
+            var setParamsFrom = setParamsFrom.bind(this);
+            var newValue;
+            if (el.max && el.min) {
+              
+              // Weighted random for invaderShootingFrequency
+              if (i === 'invaderShootingFrequency') {
+                newValue = weightedRandom(el.min, el.max, 4, 100);
+              } else {
+                newValue = randomIntFromInterval(el.min, el.max);
+              }
+
+              if (defaultParams[i]) {
+                setParamsFrom(i, newValue); 
+              }
+
+            } else {
+              if (i.indexOf('Shape') > -1) {
+                var shapes = ['Square', 'Triangle', 'Circle']
+                var randomShape = shapes[randomIntFromInterval(0, shapes.length)];
+                newValue = i.substring(0, i.indexOf('Shape')) + randomShape;
+                setParamsFrom(i, newValue);
+              } else if (i.indexOf('Color') > -1) {
+                newValue = getRandomColor();
+                setParamsFrom(i, newValue);
+              }
+            }
+          }
+          
+        }
+        this.params.randomParams = false;
+      }
+      
       
       // Update Invader Size
       for (var i in this.bodies) {
@@ -328,10 +425,9 @@ playerShapeFieldsetInput.onchange = function(e) {
         }
       }
       
+      
       // Update Mouse Control
       this.params.mouseControl = mouseControlCheckbox.checked
-      ///this.params = setGameURL(this.params);
-      //console.log(JSON.stringify(params));
     },
     
 
@@ -394,6 +490,8 @@ playerShapeFieldsetInput.onchange = function(e) {
     draw: function(screen, gameSize) {
       // Clear away the drawing from the previous tick.
       screen.clearRect(0, 0, gameSize.x, gameSize.y);
+      screen.fillStyle = this.params.backgroundColor;
+      screen.fillRect(0, 0, gameSize.x, gameSize.y);
 
       // Draw each body as a rectangle.
       for (var i = 0; i < this.bodies.length; i++) {
@@ -427,8 +525,7 @@ playerShapeFieldsetInput.onchange = function(e) {
   var Invader = function(game, center) {
     this.game = game;
     this.center = center;
-    
-    //console.log(JSON.stringify(game));
+
     this.size = { x: game.params.invaderSize, y: game.params.invaderSize };
 
     // Invaders patrol from left to right and back again.
@@ -436,7 +533,7 @@ playerShapeFieldsetInput.onchange = function(e) {
     // invader in their patrol.  It starts at 0, increases to 40, then
     // decreases to 0, and so forth.
     this.patrolX = 0;
-    //this.patrolMax = this.game.params.invaderPatrolDistance;
+    this.game.patrolReset = false;
 
     // The x speed of the invader.  A positive value moves the invader
     // right. A negative value moves it left.
@@ -451,11 +548,19 @@ playerShapeFieldsetInput.onchange = function(e) {
       this.speedX = this.speedX > 0 ? setSpeed : -setSpeed;
       this.patrolMax = this.game.params.invaderPatrolDistance;
       // If the invader is outside the bounds of their patrol...
-      if (this.patrolX < (-this.patrolMax + 30) || this.patrolX > this.patrolMax) {
-
+      
+      if ((this.patrolX < (-this.patrolMax + 30) || this.patrolX > this.patrolMax) && !this.patrolReset) {
+        
         // ... reverse direction of movement.
         this.speedX = -this.speedX;
+        this.patrolReset = true;
       }
+      
+      // 13 and 17 are half the width of the invader (30) + or - 2 in case the speed is high.
+      if (this.patrolX >= 13 && this.patrolX <= 17) {
+        this.patrolReset = false;
+      }
+      
 
       // If coin flip comes up and no friends below in this
       // invader's column...
@@ -489,7 +594,10 @@ playerShapeFieldsetInput.onchange = function(e) {
       this.center.x += this.speedX;
 
       // Update variable that keeps track of current position in patrol.
+      //console.log(this.game.patrolReset);
+      //console.log(this.patrolX + " - " + this.speedX);
       this.patrolX += this.speedX;
+      //console.log(this.patrolX + "\n\n");
     }
   };
 
@@ -575,7 +683,7 @@ playerShapeFieldsetInput.onchange = function(e) {
       }
 
       // If S key is down...
-      if (this.keyboarder.isDown(this.keyboarder.KEYS.S) || shootThisFrame) {
+      if (this.keyboarder.isDown(this.keyboarder.KEYS.S) || this.keyboarder.isDown(this.keyboarder.KEYS.Space) || shootThisFrame) {
         // ... create a bullet just above the player that will move upwards...
         var bulletSize = {
           x: this.game.params.playerBulletSize,
@@ -650,7 +758,7 @@ playerShapeFieldsetInput.onchange = function(e) {
     };
 
     // Handy constants that give keyCodes human-readable names.
-    this.KEYS = { LEFT: 37, RIGHT: 39, S: 83 };
+    this.KEYS = { LEFT: 37, RIGHT: 39, S: 83, Space: 32 };
   };
 
   // Other functions
@@ -691,14 +799,18 @@ playerShapeFieldsetInput.onchange = function(e) {
         screen.fill();
       }
       
+      
       switch(shape) {
-        case 'square':
+        case 'invaderSquare':
+        case 'playerSquare':
           drawShapeBody = drawRectBody;
           break;
-        case 'triangle':
+        case 'invaderTriangle':
+        case 'playerTriangle':
           drawShapeBody = drawInvTriBody;
           break;
-        case 'circle':
+        case 'invaderCircle':
+        case 'playerCircle':
           drawShapeBody = drawCircBody;
           break;
         default:
@@ -768,6 +880,17 @@ playerShapeFieldsetInput.onchange = function(e) {
     }
   });
   
+  var defaultsButton = document.getElementById('reset-defaults');
+  defaultsButton.onclick = () => {
+    currentGame.params.resetParams = true;
+    document.getElementById("hidden-input").focus();
+  }
+  var randomizeButton = document.getElementById('randomize');
+  randomizeButton.onclick = function() {
+    currentGame.params.randomParams = true;
+    document.getElementById("hidden-input").focus();
+  }
+
 
 })();
 

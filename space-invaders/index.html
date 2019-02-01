@@ -11,31 +11,23 @@
       MTIConfig.EnableCustomFOUTHandler = true // true = prevent FOUT
     </script>
 
-    <!--<script type="text/javascript" src="http://fast.fonts.net/jsapi/3ac768d8-7a5c-4fd8-b377-f61d7f1760fa.js"></script>-->
-
-    <title>Space Invaders Remixed!</title>
-    <!--<script src="remix-params.js" defer></script>-->
+    <title>Remixable Space Invaders!</title>
     <script src="space-invaders.js" defer></script>
-
     <link type="text/css" rel="stylesheet" href="/main.css" />
+    <link rel="icon" type="image/png" href="https://cdn.glitch.com/94ac0a61-11e1-4dc4-b5a9-c42bc2d9fa47%2FMouseSecondary-Twitter_400x400.png?1535464374851" />
   </head>
   <body>
     
     <div id="game" class="grid-element project">
       <canvas id="space-invaders" width="300" height="300"></canvas>
-    </div>
-
-    <div id="scrollable">
-      <div class="header">
-        <a href="/">
-          <h1>Space Invaders Remixed!</h1>
-        </a>
+      <div id="game-info">
         <h2>
           Score: <span id="score">0</span>
         </h2>
         <h2>
           Lives: <span id="lives">3</span>
         </h2>
+        <br>
         <button id="reset-button">
           New Game
         </button>
@@ -43,91 +35,150 @@
           Pause
         </button>
       </div>
+    </div>
+
+    <div id="scrollable">
+      <div class="header">
+        <img id="mouse-logo" src="https://cdn.glitch.com/94ac0a61-11e1-4dc4-b5a9-c42bc2d9fa47%2Fmouse_logo_gear_rgb.png?1535462970175" alt="Mouse Logo" />
+        <h1 class="header"><a class="header" href="/">Remixable Space Invaders!</a></h1>
+      </div>
 
       <audio id="shoot-sound" src="https://cdn.hyperdev.com/57237357-0897-4eed-a5ec-b35c4432502c/shoot.mp3"></audio>
 
 
       <div>
-        <p>
-          <strong>Directions: </strong>Move with the arrow keys or a mouse/touch.  Shoot with the S key or with click/tap.  Refresh to play again.
+        
+        <p id="about">
+          <strong>What is Remixable Space Invaders?</strong><br>This is a remixable simplified version of the classic arcade game <a href="https://en.wikipedia.org/wiki/Space_Invaders" target="blank">Space Invaders</a>. Defend your planet against the group of invaders who have appeared in the sky!
+        </p>
+        
+        <p id="directions">
+          <strong>Directions:</strong><br>Move with the arrow keys or a mouse/touch (turn on mouse controls below).  Shoot with the S key, spacebar or with click/tap.  The game on the left (or at the top on mobile) updates live as you change the sliders below. Click the 'Activate Controls!' button to get started.
         </p>
       </div>
+      
+      <div id="toggle">
+        <h3>
+          Click below to start remixing the game!
+        </h3>
+        
+        <button id="toggle-button">
+          💫 Activate Controls! 💫
+        </button>
+      </div>
+      
 
       <div id="parameters">
 
-        <h2>
-          Change Parameters Below:
+        <h2 class="header">
+          Change Parameters to Remix the Game:
         </h2>
 
         <input type="checkbox" id="hidden-input" name="hidden-input">
 
-        <label>Player Shooting Delay: <span id="shootingDelay-value"></span></label>
-        <input type="range" id="shootingDelay" name="shooting-delay" 
-           min="0" max="1000" value="0" step="50" />
+        <div id="invader-params" class="param-category">
+          <h3>
+            Invader Parameters:
+          </h3>
+          
+          <label>Invader Size: <span id="invaderSize-value"></span></label>
+          <input type="range" id="invaderSize" name="invade-size" 
+             min="0" max="30" value="15" step="1" />
+          
+          <label>Invader Shooting Frequency: <span id="invaderShootingFrequency-value"></span></label>
+          <input type="range" id="invaderShootingFrequency" name="invader-shooting-frequency" 
+             min="0" max="1000" value="10" step="5" />
 
-        <label>Player Speed: <span id="playerSpeed-value"></span></label>
-        <input type="range" id="playerSpeed" name="player-speed" 
-           min="0" max="300" value="60" step="10" />
+          <label>Invader Speed: <span id="invaderSpeed-value"></span></label>
+          <input type="range" id="invaderSpeed" name="invader-speed" 
+             min="0" max="60" value="10" step="3" />
 
-        <label>Player Blaster Size: <span id="playerBulletSize-value"></span></label>
-        <input type="range" id="playerBulletSize" name="player-bullet-size" 
-           min="0" max="15" value="3" step="1" />
+          <label>Invader Blaster Size: <span id="invaderBulletSize-value"></span></label>
+          <input type="range" id="invaderBulletSize" name="invader-bullet-size" 
+             min="0" max="15" value="3" step="1" />
 
-        <label>Player Shape:</label>
-        <fieldset id="playerShape">
-          <input type="radio" id="playerSquare" name="playerShape" value="square" checked />
-          <label for="playerSqaure">■</label><br>
-          <input type="radio" id="playerTriangle" name="playerShape" value="triangle" />
-          <label for="playerTriangle">▲</label><br>
-          <input type="radio" id="playerCircle" name="playerShape" value="circle" />
-          <label for="playerCircle">⬤</label><br>
-        </fieldset>
+          <label>Invader Blaster Speed: <span id="invaderBulletSpeed-value"></span></label>
+          <input type="range" id="invaderBulletSpeed" name="invader-bullet-speed" 
+             min="0" max="30" value="2" step="1" />
 
-        <label>Player Color: <span id="playerColor-value"></span></label>
-        <input type="color" id="playerColor" name="player-color" value="#DFDFDF">
+          <label>Invader Blaster Direction Randomness: <span id="invaderBulletDirectionRandomness-value"></span></label>
+          <input type="range" id="invaderBulletDirectionRandomness" name="invader-bullet-direction-randomness" 
+             min="0" max="30" value="5" step="1" />
+          
+          <label>Invader Patrol Distance: <span id="invaderPatrolDistance-value"></span></label>
+          <input type="range" id="invaderPatrolDistance" name="invader-patrol-distance" 
+             min="0" max="270" value="30" step="10" />
+        </div>
+        
+        <div id="player-params" class="param-category">
+          <h3>
+            Player Parameters:
+          </h3>
 
-        <label>Invader Size: <span id="invaderSize-value"></span></label>
-        <input type="range" id="invaderSize" name="invade-size" 
-           min="0" max="30" value="15" step="1" />
+          <label>Player Speed: <span id="playerSpeed-value"></span></label>
+          <input type="range" id="playerSpeed" name="player-speed" 
+             min="0" max="300" value="60" step="10" />
 
-        <label>Invader Speed: <span id="invaderSpeed-value"></span></label>
-        <input type="range" id="invaderSpeed" name="invader-speed" 
-           min="0" max="60" value="10" step="3" />
+          <label>Player Blaster Size: <span id="playerBulletSize-value"></span></label>
+          <input type="range" id="playerBulletSize" name="player-bullet-size" 
+             min="0" max="15" value="3" step="1" />
+          
+          <label>Player Shooting Delay: <span id="shootingDelay-value"></span></label>
+          <input type="range" id="shootingDelay" name="shooting-delay" 
+             min="0" max="1000" value="0" step="50" />
+          
+          <label>Lives:</label><input type="number" id="startingLives">
+        </div>
 
-        <label>Invader Patrol Distance: <span id="invaderPatrolDistance-value"></span></label>
-        <input type="range" id="invaderPatrolDistance" name="invader-patrol-distance" 
-           min="0" max="270" value="30" step="10" />
+        
+        
+        <div id="customize" class="param-category">
+          <h3>
+            Customize:
+          </h3>
 
-        <label>Invader Shooting Frequency: <span id="invaderShootingFrequency-value"></span></label>
-        <input type="range" id="invaderShootingFrequency" name="invader-shooting-frequency" 
-           min="0" max="1000" value="10" step="5" />
+          <label>Invader Shape:</label>
+          <fieldset id="invaderShape">
+            <input type="radio" id="invaderSquare" name="invaderShape" value="invaderSquare" checked />
+            <label for="invaderSqaure" style="font-size: 200%;">■</label><br>
+            <input type="radio" id="invaderTriangle" name="invaderShape" value="invaderTriangle" />
+            <label for="invaderTriangle">▲</label><br>
+            <input type="radio" id="invaderCircle" name="invaderShape" value="invaderCircle" />
+            <label for="invaderCircle">⬤</label><br>
+          </fieldset>
 
-        <label>Invader Blaster Size: <span id="invaderBulletSize-value"></span></label>
-        <input type="range" id="invaderBulletSize" name="invader-bullet-size" 
-           min="0" max="15" value="3" step="1" />
+          <label>Invader Color: <span id="invaderColor-value"></span></label>
+          <input type="color" id="invaderColor" name="invader-color" value="#EFEFAF">
+          
+          
+          <label>Player Shape:</label>
+          <fieldset id="playerShape">
+            <input type="radio" id="playerSquare" name="playerShape" value="playerSquare" checked />
+            <label for="playerSqaure" style="font-size: 200%;">■</label><br>
+            <input type="radio" id="playerTriangle" name="playerShape" value="playerTriangle" />
+            <label for="playerTriangle">▲</label><br>
+            <input type="radio" id="playerCircle" name="playerShape" value="playerCircle" />
+            <label for="playerCircle">⬤</label><br>
+          </fieldset>
 
-        <label>Invader Blaster Speed: <span id="invaderBulletSpeed-value"></span></label>
-        <input type="range" id="invaderBulletSpeed" name="invader-bullet-speed" 
-           min="0" max="30" value="2" step="1" />
+          <label>Player Color: <span id="playerColor-value"></span></label>
+          <input type="color" id="playerColor" name="player-color" value="#DFDFDF">
+          
+          <label>Background Color: <span id="backgroundColor-value"></span></label>
+          <input type="color" id="backgroundColor" name="background-color" value="#000000">
+        </div>
+        
+        <div id="reset-buttons">
+          <button id="reset-defaults">
+            Reset to Defaults
+          </button>
+          <button id="randomize">
+            Randomize All
+          </button>
+          
+        </div>
 
-        <label>Invader Blaster Direction Randomness: <span id="invaderBulletDirectionRandomness-value"></span></label>
-        <input type="range" id="invaderBulletDirectionRandomness" name="invader-bullet-direction-randomness" 
-           min="0" max="30" value="5" step="1" />
-
-        <label>Invader Shape:</label>
-        <fieldset id="invaderShape">
-          <input type="radio" id="invaderSquare" name="invaderShape" value="square" checked />
-          <label for="invaderSqaure">■</label><br>
-          <input type="radio" id="invaderTriangle" name="invaderShape" value="triangle" />
-          <label for="invaderTriangle">▲</label><br>
-          <input type="radio" id="invaderCircle" name="invaderShape" value="circle" />
-          <label for="invaderCircle">⬤</label><br>
-        </fieldset>
-
-        <label>Invader Color: <span id="invaderColor-value"></span></label>
-        <input type="color" id="invaderColor" name="invader-color" value="#EFEFAF">
-
-        <label>Lives:</label><input type="number" id="startingLives">
+        
 
         <label>Mouse/Touch Control: <span id="mouseControl-value"></span></label>
         <input type="checkbox" id="mouseControl" name="mouse-control" />
@@ -135,16 +186,16 @@
 
 
         <label>Custom Game URL:</label>
-        <input type="text" id="gameURL" name="game-url" value="https://space-invaders-remixable.glitch.me/" />
+        <input type="text" id="gameURL" name="game-url" value="https://remixable-space-invaders.glitch.me/" />
       </div>
 
-
+      <hr>
+      
       <div class="footer">
-        Adapted from <a href="https://github.com/maryrosecook/annotated-code">Space Invaders</a> by <a href="http://maryrosecook.com">Mary Rose Cook</a>
+        
+        <img src="https://cdn.glitch.com/94ac0a61-11e1-4dc4-b5a9-c42bc2d9fa47%2FMouseSecondary-Twitter_400x400.png?1535464374851" id="gearbo"><p id="mouse-text">This project is part of the <!--<a href="https://create.mouse.org/" target="blank">-->Mouse Create<!--</a>--> <a href="https://mouse.org/seriousgames" target="blank">Serious Games</a> course. <a href="https://mouse.org">Mouse</a> is a national youth development nonprofit that believes in technology as a force for good.</p>
+         <p id="adapted-text">Adapted from <a href="https://github.com/maryrosecook/annotated-code" target="blank">Space Invaders</a> by <a href="http://maryrosecook.com" target="blank">Mary Rose Cook</a></p>
       </div>
-
-      <footer id="gWidget"></footer>
-      <!--<script src="https://widget.glitch.me/widget.min.js"></script>  -->
     
     </div>
   </body>
