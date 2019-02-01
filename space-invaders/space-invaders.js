@@ -14,6 +14,11 @@ var levelOver = false;
 var canvas;
 var screen;
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 const defaultParams = {
   shootingDelay: 100,
   playerSpeed: 60,
@@ -51,6 +56,7 @@ function getParamsFromHash() {
   if(window.location.hash) {
     var hash = window.location.hash;
     var paramString = hash.substring(1, hash.length);
+    paramString = paramString.replaceAll("Blaster", "Bullet");
     var paramStringArray = paramString.split('&');
 
     for (var i in paramStringArray) {
@@ -129,9 +135,10 @@ function setGameUrlAndHashFrom(params) {
     }
   }
 
-  hash = hash.substr(0, hash.length - 1);
-  gameURL += ('#' + hash);
   
+  hash = hash.substr(0, hash.length - 1);
+  hash= hash.replaceAll("Bullet", "Blaster");
+  gameURL += ('#' + hash);
   window.location.hash = hash;
   document.getElementById('gameURL').value = gameURL;
   params.gameURL = gameURL;
