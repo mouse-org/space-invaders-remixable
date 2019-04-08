@@ -372,10 +372,6 @@ function getRandomColor() {
         }
       };
       
-      console.log("PARAMS:")
-      console.log(this.params)
-      
-      
       // Press Reset Params Button
       if (this.params.resetParams === true) {
         for (var i in this.params) {
