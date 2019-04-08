@@ -373,19 +373,19 @@ function getRandomColor() {
       };
       
       // Press Reset Params Button
-      if (this.params.resetParams) {
+      if (this.params.resetParams === true) {
         for (var i in this.params) {
           if (defaultParams[i]) {
             var setParamsFrom = setParamsFrom.bind(this);
             setParamsFrom(i, defaultParams[i]); 
           } 
         }
-        setGameUrlAndHashFrom(this.params);
         this.params.resetParams = false;
+        setGameUrlAndHashFrom(this.params);
       }
       
       // Press Random Params Button
-      if (this.params.randomParams) {
+      if (this.params.randomParams === true) {
         for (var i in this.params) {
           
           var el = document.getElementById(i);
@@ -420,6 +420,7 @@ function getRandomColor() {
           
         }
         this.params.randomParams = false;
+        setGameUrlAndHashFrom(this.params);
       }
       
       
